@@ -1,12 +1,11 @@
 [package]
-name = "daisy_bsp"
+name = "daisy"
 version = "0.4.2"
-authors = ["Antoine van Gelder <antoine@flowdsp.io>"]
+authors = ["Petr Horáček <hrck@protonmail.com>"]
 edition = "2018"
 license = "MIT"
 description = "A board support package for the Electro-Smith Daisy Seed"
-repository = "https://github.com/antoinevg/daisy_bsp"
-documentation = "https://github.com/antoinevg/daisy_bsp/wiki"
+repository = "https://github.com/phoracek/daisy_bsp"
 categories = [
     "embedded",
     "hardware-support",
@@ -19,6 +18,7 @@ keywords = [
     "daisy",
 ]
 readme = "README.md"
+publish = false
 
 [package.metadata.docs.rs]
 features = [ "seed", "pod", "petal", "patch", "field" ]
