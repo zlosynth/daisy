@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 -->
 
+- Implement abstraction layer for the flash memory.
+
 ## [0.4.2] - 2021-08-01
 ### Added
 - Expose the (Q)SPI pins to access flash memory (Tx @phoracek!)
