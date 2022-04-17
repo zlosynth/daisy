@@ -10,3 +10,4 @@ backwards compatibility.
 * Added flash memory access interface.
 * Define razor guiding what goes into the library and what not.
 * Introduce CI.
+* Add SRAM to memory layout.
