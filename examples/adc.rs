@@ -7,11 +7,9 @@
 use cortex_m_rt::entry;
 use panic_semihosting as _;
 
-use daisy_bsp as daisy;
-
 use cortex_m::asm;
 
-use daisy_bsp::hal;
+use daisy::hal;
 use hal::adc;
 use hal::delay::Delay;
 use hal::prelude::*;

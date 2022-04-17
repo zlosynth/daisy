@@ -8,8 +8,6 @@ use cortex_m::asm;
 use cortex_m_rt::entry;
 use panic_semihosting as _;
 
-use daisy_bsp as daisy;
-
 use daisy::hal;
 use hal::prelude::*;
 
@@ -105,6 +103,7 @@ fn main() -> ! {
         Ok(audio_interface) => audio_interface,
         Err(e) => {
             loggit!("Failed to start audio interface: {:?}", e);
+            #[allow(clippy::empty_loop)]
             loop {}
         }
     };

@@ -11,7 +11,7 @@ format:
 
 .PHONY: clippy
 clippy:
-	cargo clippy --all -- -D warnings
+	cargo clippy --all --examples -- -D warnings
 
 .PHONY: check
 check:

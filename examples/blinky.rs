@@ -6,7 +6,6 @@ use panic_semihosting as _;
 
 use daisy::hal::prelude::*;
 use daisy::led::Led;
-use daisy_bsp as daisy;
 
 #[entry]
 fn main() -> ! {
