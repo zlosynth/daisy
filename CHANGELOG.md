@@ -9,3 +9,4 @@ backwards compatibility.
 * Initial fork from [antoinevg/daisy_bsp](https://github.com/antoinevg/daisy_bsp).
 * Added flash memory access interface.
 * Define razor guiding what goes into the library and what not.
+* Introduce CI.
