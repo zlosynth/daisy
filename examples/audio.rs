@@ -69,7 +69,6 @@ fn main() -> ! {
     // - audio callback -------------------------------------------------------
 
     // handle callback with function pointer
-    #[cfg(not(feature = "alloc"))]
     let audio_interface = {
         fn callback(fs: f32, block: &mut audio::Block) {
             static mut OSC_1: osc::Wavetable = osc::Wavetable::new(osc::Shape::Sin);
@@ -82,21 +81,6 @@ fn main() -> ! {
         }
 
         audio_interface.spawn(callback)
-    };
-
-    // handle callback with closure (needs alloc)
-    #[cfg(any(feature = "alloc"))]
-    let audio_interface = {
-        let mut osc_1: osc::Wavetable = osc::Wavetable::new(osc::Shape::Sin);
-        let mut osc_2: osc::Wavetable = osc::Wavetable::new(osc::Shape::Saw);
-
-        audio_interface.spawn(move |fs, block| {
-            osc_1.dx = (1. / fs) * 110.00;
-            osc_2.dx = (1. / fs) * 110.00;
-            for frame in block {
-                *frame = (osc_1.step(), osc_2.step());
-            }
-        })
     };
 
     let audio_interface = match audio_interface {
