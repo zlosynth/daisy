@@ -104,22 +104,6 @@ name = "blinky"
 required-features = [ "seed" ]
 
 [[example]]
-name = "blinky_pac"
-required-features = [ "seed" ]
-
-[[example]]
-name = "blinky_hal"
-required-features = [ "seed" ]
-
-[[example]]
-name = "button"
-required-features = [ "seed" ]
-
-[[example]]
-name = "audio_passthrough"
-required-features = [ "seed" ]
-
-[[example]]
 name = "audio_testsignal"
 required-features = [ "seed" ]
 
@@ -128,15 +112,7 @@ name = "audio_midi"
 required-features = [ "alloc", "seed", "uses_num" ]
 
 [[example]]
-name = "serial"
-required-features = [ "seed" ]
-
-[[example]]
-name = "adc_hal"
-required-features = [ "seed" ]
-
-[[example]]
-name = "adc_bsp"
+name = "adc"
 required-features = [ "seed" ]
 
 [[example]]
