@@ -32,6 +32,7 @@ impl Board {
     }
 
     #[inline]
+    #[allow(clippy::missing_safety_doc)]
     pub unsafe fn steal() -> Self {
         Board
     }
@@ -47,6 +48,7 @@ impl Board {
 
     /// Takes the board's GPIO peripherals and split them into ZST's
     /// representing the individual GPIO pins used by the board.
+    #[allow(clippy::too_many_arguments)]
     pub fn split_gpios(
         &self,
         gpioa: hal::gpio::gpioa::Parts,

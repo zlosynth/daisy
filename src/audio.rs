@@ -300,8 +300,7 @@ use core::num::Wrapping;
 #[inline(always)]
 fn u24_to_f32(y: u32) -> f32 {
     let y = (Wrapping(y) + Wrapping(0x0080_0000)).0 & 0x00FF_FFFF; // convert to i32
-    let y = (y as f32 / 8_388_608.) - 1.; // (2^24) / 2
-    y
+    (y as f32 / 8_388_608.) - 1. // (2^24) / 2
 }
 
 /// convert audio data from f32 to u24

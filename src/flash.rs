@@ -128,7 +128,7 @@ impl Flash {
     /// Panics if data is empty.
     pub fn write(&mut self, mut address: u32, data: &[u8]) {
         assert!(address <= MAX_ADDRESS);
-        assert!(data.len() > 0);
+        assert!(!data.is_empty());
 
         self.erase(address, data.len() as u32);
 
