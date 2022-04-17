@@ -6,6 +6,12 @@ Seed and Daisy Patch SM.
 This project was forked from
 [antoinevg/daisy_bsp](https://github.com/antoinevg/daisy_bsp).
 
+# Razor
+
+* This library aims to abstract all peripherals that are available on Daisy.
+* This library will **not** abstract anything that is not on Daisy, e.g. pots,
+  SD cards, MIDI, ...
+
 # License
 
 This library is distributed under the terms of the MIT license. See
