@@ -9,7 +9,6 @@
 Cargo.lock
 
 # misc
-Makefile
 TODO
 openocd.cfg
 openocd.gdb
