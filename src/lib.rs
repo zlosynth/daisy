@@ -1,4 +1,3 @@
-#![cfg_attr(feature = "alloc", feature(alloc_error_handler))]
 #![deny(warnings)]
 #![no_std]
 
@@ -8,8 +7,6 @@
 
 // - modules ------------------------------------------------------------------
 
-#[cfg(any(feature = "alloc"))]
-pub mod alloc;
 pub mod audio;
 pub mod board;
 pub mod clocks;

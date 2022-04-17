@@ -1,8 +1,3 @@
-#[cfg(any(feature = "alloc"))]
-extern crate alloc;
-#[cfg(any(feature = "alloc"))]
-use alloc::boxed::Box;
-
 use hal::dma;
 use hal::gpio;
 use hal::sai::{self, I2sUsers, SaiChannel, SaiI2sExt};
@@ -72,10 +67,7 @@ pub enum Error {
 pub struct Interface<'a> {
     pub fs: time::Hertz,
 
-    #[cfg(not(feature = "alloc"))]
     function_ptr: Option<fn(f32, &mut Block)>,
-    #[cfg(any(feature = "alloc"))]
-    closure: Option<Box<dyn FnMut(f32, &mut Block) + Send + Sync + 'a>>,
 
     ak4556_reset: Option<gpio::gpiob::PB11<gpio::Output<gpio::PushPull>>>,
     hal_dma1_stream0: Option<TransferDma1Str0>,
@@ -151,10 +143,7 @@ impl<'a> Interface<'a> {
         Ok(Self {
             fs: FS,
 
-            #[cfg(not(feature = "alloc"))]
             function_ptr: None,
-            #[cfg(any(feature = "alloc"))]
-            closure: Option::None,
 
             ak4556_reset: Some(pins.0),
             hal_dma1_stream0: Some(dma1_str0),
@@ -166,20 +155,8 @@ impl<'a> Interface<'a> {
     }
 
     /// assign function pointer for interrupt callback and start audio
-    #[cfg(not(feature = "alloc"))]
     pub fn spawn(mut self, function_ptr: fn(f32, &mut Block)) -> Result<Self, Error> {
         self.function_ptr = Some(function_ptr);
-        self.start()?;
-        Ok(self) // TODO type state for started audio interface
-    }
-
-    /// assign closure for interrupt callback and start audio
-    #[cfg(any(feature = "alloc"))]
-    pub fn spawn<F: FnMut(f32, &mut Block) + Send + Sync + 'a>(
-        mut self,
-        closure: F,
-    ) -> Result<Self, Error> {
-        self.closure = Some(Box::new(closure));
         self.start()?;
         Ok(self) // TODO type state for started audio interface
     }
@@ -280,14 +257,8 @@ impl<'a> Interface<'a> {
     }
 
     fn invoke_callback(&mut self, block: &mut Block) {
-        #[cfg(not(feature = "alloc"))]
         if let Some(function_ptr) = self.function_ptr.as_mut() {
             function_ptr(self.fs.0 as f32, block);
-        }
-
-        #[cfg(any(feature = "alloc"))]
-        if let Some(closure) = self.closure.as_mut() {
-            closure(self.fs.0 as f32, block);
         }
     }
 }

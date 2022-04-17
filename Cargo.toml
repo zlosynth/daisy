@@ -34,16 +34,6 @@ stm32h7xx-hal = { version = "0.11.0", features = [ "stm32h750v", "rt", "revision
 cty = "0.2.1"
 cortex-m-semihosting = "0.3.5"
 
-# - optional dependencies used by features
-
-[dependencies.static-alloc]
-version = "0.2.2"
-optional = true
-
-[dependencies.without-alloc]
-version = "0.2.1"
-optional = true
-
 # - optional dependencies used by examples
 
 [dependencies.num]
@@ -75,7 +65,6 @@ panic-semihosting = { version = "0.5.6" }
 
 [features]
 default = [ "seed" ]
-alloc = [ "static-alloc", "without-alloc"  ] # requires rust nightly
 seed = []
 pod = []
 petal = []
