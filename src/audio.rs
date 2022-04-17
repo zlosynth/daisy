@@ -78,9 +78,7 @@ pub struct Interface<'a> {
     function_ptr: Option<fn(f32, &mut Block)>,
 
     ak4556_reset: Option<gpio::gpiob::PB11<gpio::Output<gpio::PushPull>>>,
-    hal_dma1_stream0: Option<TransferDma1Str0>,
-    hal_dma1_stream1: Option<TransferDma1Str1>,
-    hal_sai1: Option<hal::sai::Sai<pac::SAI1, hal::sai::I2S>>,
+    transfer: Transfer,
 
     _marker: core::marker::PhantomData<&'a ()>,
 }
@@ -92,44 +90,15 @@ impl<'a> Interface<'a> {
         pins: CodecPins,
         dma1_rec: hal::rcc::rec::Dma1,
     ) -> Result<Interface<'a>, Error> {
-        // - configure dma1 ---------------------------------------------------
-
-        let dma1_streams =
-            dma::dma::StreamsTuple::new(unsafe { pac::Peripherals::steal().DMA1 }, dma1_rec);
-
-        // dma1 stream 0
-        let tx_buffer: &'static mut [u32; DMA_BUFFER_LENGTH] = unsafe { &mut TX_BUFFER };
-        let dma_config = dma::dma::DmaConfig::default()
-            .priority(dma::config::Priority::High)
-            .memory_increment(true)
-            .peripheral_increment(false)
-            .circular_buffer(true)
-            .fifo_enable(false);
-        let dma1_str0: dma::Transfer<_, _, dma::MemoryToPeripheral, _, _> = dma::Transfer::init(
-            dma1_streams.0,
-            unsafe { pac::Peripherals::steal().SAI1 },
-            tx_buffer,
-            None,
-            dma_config,
-        );
-
-        // dma1 stream 1
-        let rx_buffer: &'static mut [u32; DMA_BUFFER_LENGTH] = unsafe { &mut RX_BUFFER };
-        let dma_config = dma_config
-            .transfer_complete_interrupt(true)
-            .half_transfer_interrupt(true);
-        let dma1_str1: dma::Transfer<_, _, dma::PeripheralToMemory, _, _> = dma::Transfer::init(
-            dma1_streams.1,
-            unsafe { pac::Peripherals::steal().SAI1 },
-            rx_buffer,
-            None,
-            dma_config,
-        );
-
-        // - configure sai1 ---------------------------------------------------
-
         let sai1_pins = (pins.1, pins.2, pins.3, pins.4, Some(pins.5));
-        let sai1 = init_sai1(clocks, sai1_rec, sai1_pins);
+        let transfer = Transfer::init(
+            clocks,
+            sai1_rec,
+            sai1_pins,
+            dma1_rec,
+            unsafe { &mut TX_BUFFER },
+            unsafe { &mut RX_BUFFER },
+        );
 
         Ok(Self {
             fs: FS,
@@ -137,9 +106,7 @@ impl<'a> Interface<'a> {
             function_ptr: None,
 
             ak4556_reset: Some(pins.0),
-            hal_dma1_stream0: Some(dma1_str0),
-            hal_dma1_stream1: Some(dma1_str1),
-            hal_sai1: Some(sai1),
+            transfer,
 
             _marker: core::marker::PhantomData,
         })
@@ -163,46 +130,16 @@ impl<'a> Interface<'a> {
 
         // - start audio ------------------------------------------------------
 
-        // unmask interrupt handler for dma 1, stream 1
-        unsafe {
-            pac::NVIC::unmask(pac::Interrupt::DMA1_STR1);
-        }
-
-        let dma1_str0 = self.hal_dma1_stream0.as_mut().unwrap();
-        let dma1_str1 = self.hal_dma1_stream1.as_mut().unwrap();
-        let sai1 = self.hal_sai1.as_mut().unwrap();
-
-        dma1_str1.start(|_sai1_rb| {
-            sai1.enable_dma(SaiChannel::ChannelB);
-        });
-
-        dma1_str0.start(|sai1_rb| {
-            sai1.enable_dma(SaiChannel::ChannelA);
-
-            // wait until sai1's fifo starts to receive data
-            while sai1_rb.cha.sr.read().flvl().is_empty() {}
-
-            sai1.enable();
-
-            use stm32h7xx_hal::traits::i2s::FullDuplex;
-            sai1.try_send(0, 0).unwrap();
-        });
+        self.transfer.start();
 
         Ok(())
     }
 
     pub fn handle_interrupt_dma1_str1(&mut self) -> Result<(), Error> {
-        let transfer = self.hal_dma1_stream1.as_mut().unwrap();
-
-        let skip = if transfer.get_half_transfer_flag() {
-            transfer.clear_half_transfer_interrupt();
-            (0, HALF_DMA_BUFFER_LENGTH)
-        } else if transfer.get_transfer_complete_flag() {
-            transfer.clear_transfer_complete_interrupt();
-            (HALF_DMA_BUFFER_LENGTH, 0)
-        } else {
-            // TODO handle error flags once HAL supports them
-            return Err(Error::Dma);
+        let skip = match self.transfer.examine_interrupt() {
+            Ok(State::HalfSent) => (0, HALF_DMA_BUFFER_LENGTH),
+            Ok(State::FullSent) => (HALF_DMA_BUFFER_LENGTH, 0),
+            _ => return Err(Error::Dma),
         };
 
         // callback buffer
@@ -254,28 +191,122 @@ impl<'a> Interface<'a> {
     }
 }
 
-fn init_sai1(
-    clocks: &hal::rcc::CoreClocks,
-    sai1_rec: hal::rcc::rec::Sai1,
-    sai1_pins: Sai1Pins,
-) -> sai::Sai<pac::SAI1, sai::I2S> {
-    let sai1_a_config = sai::I2SChanConfig::new(sai::I2SDir::Tx)
-        .set_frame_sync_active_high(true)
-        .set_clock_strobe(sai::I2SClockStrobe::Falling);
+struct Transfer {
+    dma1_str0: TransferDma1Str0,
+    dma1_str1: TransferDma1Str1,
+    sai1: hal::sai::Sai<pac::SAI1, hal::sai::I2S>,
+}
 
-    let sai1_b_config = sai::I2SChanConfig::new(sai::I2SDir::Rx)
-        .set_sync_type(sai::I2SSync::Internal)
-        .set_frame_sync_active_high(true)
-        .set_clock_strobe(sai::I2SClockStrobe::Rising);
+impl Transfer {
+    pub fn init(
+        clocks: &hal::rcc::CoreClocks,
+        sai1_rec: hal::rcc::rec::Sai1,
+        sai1_pins: Sai1Pins,
+        dma1_rec: hal::rcc::rec::Dma1,
+        tx_buffer: &'static mut [u32; DMA_BUFFER_LENGTH],
+        rx_buffer: &'static mut [u32; DMA_BUFFER_LENGTH],
+    ) -> Self {
+        // - configure dma1 ---------------------------------------------------
 
-    unsafe { pac::Peripherals::steal().SAI1 }.i2s_ch_a(
-        sai1_pins,
-        FS,
-        sai::I2SDataSize::BITS_24,
-        sai1_rec,
-        clocks,
-        I2sUsers::new(sai1_a_config).add_slave(sai1_b_config),
-    )
+        let dma1_streams =
+            dma::dma::StreamsTuple::new(unsafe { pac::Peripherals::steal().DMA1 }, dma1_rec);
+
+        // dma1 stream 0
+        let dma_config = dma::dma::DmaConfig::default()
+            .priority(dma::config::Priority::High)
+            .memory_increment(true)
+            .peripheral_increment(false)
+            .circular_buffer(true)
+            .fifo_enable(false);
+        let dma1_str0: dma::Transfer<_, _, dma::MemoryToPeripheral, _, _> = dma::Transfer::init(
+            dma1_streams.0,
+            unsafe { pac::Peripherals::steal().SAI1 },
+            tx_buffer,
+            None,
+            dma_config,
+        );
+
+        // dma1 stream 1
+        let dma_config = dma_config
+            .transfer_complete_interrupt(true)
+            .half_transfer_interrupt(true);
+        let dma1_str1: dma::Transfer<_, _, dma::PeripheralToMemory, _, _> = dma::Transfer::init(
+            dma1_streams.1,
+            unsafe { pac::Peripherals::steal().SAI1 },
+            rx_buffer,
+            None,
+            dma_config,
+        );
+
+        // - configure sai1 ---------------------------------------------------
+
+        let sai1_a_config = sai::I2SChanConfig::new(sai::I2SDir::Tx)
+            .set_frame_sync_active_high(true)
+            .set_clock_strobe(sai::I2SClockStrobe::Falling);
+
+        let sai1_b_config = sai::I2SChanConfig::new(sai::I2SDir::Rx)
+            .set_sync_type(sai::I2SSync::Internal)
+            .set_frame_sync_active_high(true)
+            .set_clock_strobe(sai::I2SClockStrobe::Rising);
+
+        let sai1 = unsafe { pac::Peripherals::steal().SAI1 }.i2s_ch_a(
+            sai1_pins,
+            FS,
+            sai::I2SDataSize::BITS_24,
+            sai1_rec,
+            clocks,
+            I2sUsers::new(sai1_a_config).add_slave(sai1_b_config),
+        );
+
+        Self {
+            dma1_str0,
+            dma1_str1,
+            sai1,
+        }
+    }
+
+    pub fn start(&mut self) {
+        unsafe {
+            pac::NVIC::unmask(pac::Interrupt::DMA1_STR1);
+        }
+
+        let dma1_str0 = &mut self.dma1_str0;
+        let dma1_str1 = &mut self.dma1_str1;
+        let sai1 = &mut self.sai1;
+
+        dma1_str1.start(|_sai1_rb| {
+            sai1.enable_dma(SaiChannel::ChannelB);
+        });
+
+        dma1_str0.start(|sai1_rb| {
+            sai1.enable_dma(SaiChannel::ChannelA);
+
+            // wait until sai1's fifo starts to receive data
+            while sai1_rb.cha.sr.read().flvl().is_empty() {}
+
+            sai1.enable();
+
+            use stm32h7xx_hal::traits::i2s::FullDuplex;
+            sai1.try_send(0, 0).unwrap();
+        });
+    }
+
+    pub fn examine_interrupt(&mut self) -> Result<State, ()> {
+        if self.dma1_str1.get_half_transfer_flag() {
+            self.dma1_str1.clear_half_transfer_interrupt();
+            Ok(State::HalfSent)
+        } else if self.dma1_str1.get_transfer_complete_flag() {
+            self.dma1_str1.clear_transfer_complete_interrupt();
+            Ok(State::FullSent)
+        } else {
+            Err(())
+        }
+    }
+}
+
+enum State {
+    HalfSent,
+    FullSent,
 }
 
 // - conversion helpers -------------------------------------------------------
