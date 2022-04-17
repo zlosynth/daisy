@@ -29,13 +29,21 @@ static mut RX_BUFFER: [u32; DMA_BUFFER_LENGTH] = [0; DMA_BUFFER_LENGTH];
 pub type Frame = (f32, f32);
 pub type Block = [Frame; BLOCK_LENGTH];
 
-pub type Sai1Pins = (
+pub type CodecPins = (
     gpio::gpiob::PB11<gpio::Output<gpio::PushPull>>, // PDN
     gpio::gpioe::PE2<gpio::Alternate<gpio::AF6>>,    // MCLK_A
     gpio::gpioe::PE5<gpio::Alternate<gpio::AF6>>,    // SCK_A
     gpio::gpioe::PE4<gpio::Alternate<gpio::AF6>>,    // FS_A
     gpio::gpioe::PE6<gpio::Alternate<gpio::AF6>>,    // SD_A
     gpio::gpioe::PE3<gpio::Alternate<gpio::AF6>>,    // SD_B
+);
+
+pub type Sai1Pins = (
+    gpio::gpioe::PE2<gpio::Alternate<gpio::AF6>>, // MCLK_A
+    gpio::gpioe::PE5<gpio::Alternate<gpio::AF6>>, // SCK_A
+    gpio::gpioe::PE4<gpio::Alternate<gpio::AF6>>, // FS_A
+    gpio::gpioe::PE6<gpio::Alternate<gpio::AF6>>, // SD_A
+    Option<gpio::gpioe::PE3<gpio::Alternate<gpio::AF6>>>, // SD_B
 );
 
 type TransferDma1Str0 = dma::Transfer<
@@ -81,7 +89,7 @@ impl<'a> Interface<'a> {
     pub fn init(
         clocks: &hal::rcc::CoreClocks,
         sai1_rec: hal::rcc::rec::Sai1, // reset and enable control
-        pins: Sai1Pins,
+        pins: CodecPins,
         dma1_rec: hal::rcc::rec::Dma1,
     ) -> Result<Interface<'a>, Error> {
         // - configure dma1 ---------------------------------------------------
@@ -120,25 +128,8 @@ impl<'a> Interface<'a> {
 
         // - configure sai1 ---------------------------------------------------
 
-        let sai1_tx_config = sai::I2SChanConfig::new(sai::I2SDir::Tx)
-            .set_frame_sync_active_high(true)
-            .set_clock_strobe(sai::I2SClockStrobe::Falling);
-
-        let sai1_rx_config = sai::I2SChanConfig::new(sai::I2SDir::Rx)
-            .set_sync_type(sai::I2SSync::Internal)
-            .set_frame_sync_active_high(true)
-            .set_clock_strobe(sai::I2SClockStrobe::Rising);
-
         let sai1_pins = (pins.1, pins.2, pins.3, pins.4, Some(pins.5));
-
-        let sai1 = unsafe { pac::Peripherals::steal().SAI1 }.i2s_ch_a(
-            sai1_pins,
-            FS,
-            sai::I2SDataSize::BITS_24,
-            sai1_rec,
-            clocks,
-            I2sUsers::new(sai1_tx_config).add_slave(sai1_rx_config),
-        );
+        let sai1 = init_sai1(clocks, sai1_rec, sai1_pins);
 
         Ok(Self {
             fs: FS,
@@ -261,6 +252,30 @@ impl<'a> Interface<'a> {
             function_ptr(self.fs.0 as f32, block);
         }
     }
+}
+
+fn init_sai1(
+    clocks: &hal::rcc::CoreClocks,
+    sai1_rec: hal::rcc::rec::Sai1,
+    sai1_pins: Sai1Pins,
+) -> sai::Sai<pac::SAI1, sai::I2S> {
+    let sai1_a_config = sai::I2SChanConfig::new(sai::I2SDir::Tx)
+        .set_frame_sync_active_high(true)
+        .set_clock_strobe(sai::I2SClockStrobe::Falling);
+
+    let sai1_b_config = sai::I2SChanConfig::new(sai::I2SDir::Rx)
+        .set_sync_type(sai::I2SSync::Internal)
+        .set_frame_sync_active_high(true)
+        .set_clock_strobe(sai::I2SClockStrobe::Rising);
+
+    unsafe { pac::Peripherals::steal().SAI1 }.i2s_ch_a(
+        sai1_pins,
+        FS,
+        sai::I2SDataSize::BITS_24,
+        sai1_rec,
+        clocks,
+        I2sUsers::new(sai1_a_config).add_slave(sai1_b_config),
+    )
 }
 
 // - conversion helpers -------------------------------------------------------
