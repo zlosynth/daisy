@@ -1,9 +1,8 @@
-pub use stm32h7xx_hal as hal;
 use hal::hal as embedded_hal;
+pub use stm32h7xx_hal as hal;
 
-use hal::gpio;
 use embedded_hal::digital::v2::OutputPin;
-
+use hal::gpio;
 
 // - traits -------------------------------------------------------------------
 
@@ -15,7 +14,6 @@ pub trait Led {
     /// Turns the LED on
     fn on(&mut self);
 }
-
 
 // - types --------------------------------------------------------------------
 

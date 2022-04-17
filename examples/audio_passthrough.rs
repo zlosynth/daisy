@@ -4,27 +4,25 @@
 use core::cell::RefCell;
 use cortex_m::interrupt::Mutex;
 
-use panic_semihosting as _;
-use cortex_m_rt::entry;
 use cortex_m::asm;
+use cortex_m_rt::entry;
+use panic_semihosting as _;
 
-use daisy_bsp as daisy;
 use daisy::audio;
+use daisy_bsp as daisy;
 
 use daisy::hal;
-use hal::prelude::*;
-use hal::rcc;
 use hal::gpio;
 use hal::hal::digital::v2::OutputPin;
+use hal::prelude::*;
+use hal::rcc;
 
 use daisy::pac;
 use pac::interrupt;
 
-
 // - static global state ------------------------------------------------------
 
 static AUDIO_INTERFACE: Mutex<RefCell<Option<audio::Interface>>> = Mutex::new(RefCell::new(None));
-
 
 // - entry point --------------------------------------------------------------
 
@@ -33,16 +31,18 @@ fn main() -> ! {
     // - power & clocks -------------------------------------------------------
 
     let dp: hal::pac::Peripherals = hal::pac::Peripherals::take().unwrap();
-    let ccdr: hal::rcc::Ccdr = daisy::clocks::configure(dp.PWR.constrain(),
-                                                        dp.RCC.constrain(),
-                                                        &dp.SYSCFG);
-    let sai1_rec = ccdr.peripheral.SAI1.kernel_clk_mux(rcc::rec::Sai1ClkSel::PLL3_P);
-
+    let ccdr: hal::rcc::Ccdr =
+        daisy::clocks::configure(dp.PWR.constrain(), dp.RCC.constrain(), &dp.SYSCFG);
+    let sai1_rec = ccdr
+        .peripheral
+        .SAI1
+        .kernel_clk_mux(rcc::rec::Sai1ClkSel::PLL3_P);
 
     // - configure pins -------------------------------------------------------
 
     let gpioc: gpio::gpioc::Parts = dp.GPIOC.split(ccdr.peripheral.GPIOC);
-    let mut led_user: gpio::gpioc::PC7<gpio::Output<gpio::PushPull>> = gpioc.pc7.into_push_pull_output();
+    let mut led_user: gpio::gpioc::PC7<gpio::Output<gpio::PushPull>> =
+        gpioc.pc7.into_push_pull_output();
 
     let gpiob: gpio::gpiob::Parts = dp.GPIOB.split(ccdr.peripheral.GPIOB);
     let gpioe: gpio::gpioe::Parts = dp.GPIOE.split(ccdr.peripheral.GPIOE);
@@ -55,13 +55,10 @@ fn main() -> ! {
         gpioe.pe3.into_alternate_af6(),     // SD_B
     );
 
-
     // - start audio interface ------------------------------------------------
 
-    let audio_interface = audio::Interface::init(&ccdr.clocks,
-                                                 sai1_rec,
-                                                 ak4556_pins,
-                                                 ccdr.peripheral.DMA1).unwrap();
+    let audio_interface =
+        audio::Interface::init(&ccdr.clocks, sai1_rec, ak4556_pins, ccdr.peripheral.DMA1).unwrap();
 
     // handle callback with function pointer
     #[cfg(not(feature = "alloc"))]
@@ -78,18 +75,19 @@ fn main() -> ! {
 
     // handle callback with closure (needs alloc)
     #[cfg(any(feature = "alloc"))]
-    let audio_interface = audio_interface.spawn(|_fs, block| {
-        for frame in block {
-            let (left, right) = *frame;
-            *frame = (left, right);
-        }
-    }).unwrap();
+    let audio_interface = audio_interface
+        .spawn(|_fs, block| {
+            for frame in block {
+                let (left, right) = *frame;
+                *frame = (left, right);
+            }
+        })
+        .unwrap();
 
     // wrap audio interface in mutex so we can access it in the interrupt
     cortex_m::interrupt::free(|cs| {
         AUDIO_INTERFACE.borrow(cs).replace(Some(audio_interface));
     });
-
 
     // - main loop ------------------------------------------------------------
 
@@ -102,7 +100,6 @@ fn main() -> ! {
         asm::delay(one_second);
     }
 }
-
 
 // - interrupts ---------------------------------------------------------------
 
