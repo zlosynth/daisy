@@ -25,20 +25,12 @@ fn main() -> ! {
     let board = daisy::Board::take().unwrap();
     let dp = daisy::pac::Peripherals::take().unwrap();
 
-    let mut ccdr = board.freeze_clocks(dp.PWR.constrain(), dp.RCC.constrain(), &dp.SYSCFG);
+    let mut ccdr = daisy::board_freeze_clocks!(board, dp);
 
     // switch adc_ker_ck_input multiplexer to per_ck
     ccdr.peripheral.kernel_adc_clk_mux(AdcClkSel::PER);
 
-    let pins = board.split_gpios(
-        dp.GPIOA.split(ccdr.peripheral.GPIOA),
-        dp.GPIOB.split(ccdr.peripheral.GPIOB),
-        dp.GPIOC.split(ccdr.peripheral.GPIOC),
-        dp.GPIOD.split(ccdr.peripheral.GPIOD),
-        dp.GPIOE.split(ccdr.peripheral.GPIOE),
-        dp.GPIOF.split(ccdr.peripheral.GPIOF),
-        dp.GPIOG.split(ccdr.peripheral.GPIOG),
-    );
+    let pins = daisy::board_split_gpios!(board, ccdr, dp);
 
     // - adc ------------------------------------------------------------------
 

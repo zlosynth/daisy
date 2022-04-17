@@ -8,9 +8,6 @@ use cortex_m::asm;
 use cortex_m_rt::entry;
 use panic_semihosting as _;
 
-use daisy::hal;
-use hal::prelude::*;
-
 use daisy::pac;
 use pac::interrupt;
 
@@ -32,39 +29,12 @@ fn main() -> ! {
     // - board setup ----------------------------------------------------------
 
     let board = daisy::Board::take().unwrap();
-
     let dp = pac::Peripherals::take().unwrap();
 
-    let ccdr = board.freeze_clocks(dp.PWR.constrain(), dp.RCC.constrain(), &dp.SYSCFG);
-
-    let pins = board.split_gpios(
-        dp.GPIOA.split(ccdr.peripheral.GPIOA),
-        dp.GPIOB.split(ccdr.peripheral.GPIOB),
-        dp.GPIOC.split(ccdr.peripheral.GPIOC),
-        dp.GPIOD.split(ccdr.peripheral.GPIOD),
-        dp.GPIOE.split(ccdr.peripheral.GPIOE),
-        dp.GPIOF.split(ccdr.peripheral.GPIOF),
-        dp.GPIOG.split(ccdr.peripheral.GPIOG),
-    );
-
-    let mut led_user = daisy::led::LedUser::new(pins.LED_USER);
-
-    let pins = (
-        pins.AK4556.PDN.into_push_pull_output(),
-        pins.AK4556.MCLK_A.into_alternate_af6(),
-        pins.AK4556.SCK_A.into_alternate_af6(),
-        pins.AK4556.FS_A.into_alternate_af6(),
-        pins.AK4556.SD_A.into_alternate_af6(),
-        pins.AK4556.SD_B.into_alternate_af6(),
-    );
-
-    let sai1_prec = ccdr
-        .peripheral
-        .SAI1
-        .kernel_clk_mux(hal::rcc::rec::Sai1ClkSel::PLL3_P);
-
-    let audio_interface =
-        audio::Interface::init(&ccdr.clocks, sai1_prec, pins, ccdr.peripheral.DMA1).unwrap();
+    let ccdr = daisy::board_freeze_clocks!(board, dp);
+    let pins = daisy::board_split_gpios!(board, ccdr, dp);
+    let mut led_user = daisy::board_split_leds!(pins).USER;
+    let audio_interface = daisy::board_split_audio!(ccdr, pins);
 
     // - audio callback -------------------------------------------------------
 

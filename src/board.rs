@@ -126,8 +126,8 @@ impl Board {
 #[macro_export]
 macro_rules! board_freeze_clocks {
     ($board:expr, $dp:expr) => {{
-        use daisy_bsp::hal::prelude::_stm32h7xx_hal_pwr_PwrExt;
-        use daisy_bsp::hal::prelude::_stm32h7xx_hal_rcc_RccExt;
+        use daisy::hal::prelude::_stm32h7xx_hal_pwr_PwrExt;
+        use daisy::hal::prelude::_stm32h7xx_hal_rcc_RccExt;
         $board.freeze_clocks($dp.PWR.constrain(), $dp.RCC.constrain(), &$dp.SYSCFG)
     }};
 }
@@ -135,7 +135,7 @@ macro_rules! board_freeze_clocks {
 #[macro_export]
 macro_rules! board_split_gpios {
     ($board:expr, $ccdr:expr, $dp:expr) => {{
-        use daisy_bsp::hal::gpio::GpioExt;
+        use daisy::hal::gpio::GpioExt;
         $board.split_gpios(
             $dp.GPIOA.split($ccdr.peripheral.GPIOA),
             $dp.GPIOB.split($ccdr.peripheral.GPIOB),
@@ -163,9 +163,9 @@ macro_rules! board_split_audio {
         let sai1_prec = $ccdr
             .peripheral
             .SAI1
-            .kernel_clk_mux(daisy_bsp::hal::rcc::rec::Sai1ClkSel::PLL3_P);
+            .kernel_clk_mux(daisy::hal::rcc::rec::Sai1ClkSel::PLL3_P);
 
-        daisy_bsp::audio::Interface::init(&$ccdr.clocks, sai1_prec, pins, $ccdr.peripheral.DMA1)
+        daisy::audio::Interface::init(&$ccdr.clocks, sai1_prec, pins, $ccdr.peripheral.DMA1)
             .unwrap()
     }};
 }
@@ -173,8 +173,8 @@ macro_rules! board_split_audio {
 #[macro_export]
 macro_rules! board_split_leds {
     ($pins:expr) => {{
-        daisy_bsp::led::Leds {
-            USER: daisy_bsp::led::LedUser::new($pins.LED_USER),
+        daisy::led::Leds {
+            USER: daisy::led::LedUser::new($pins.LED_USER),
         }
     }};
 }
