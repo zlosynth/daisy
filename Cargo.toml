@@ -104,12 +104,8 @@ name = "blinky"
 required-features = [ "seed" ]
 
 [[example]]
-name = "audio_testsignal"
+name = "audio"
 required-features = [ "seed" ]
-
-[[example]]
-name = "audio_midi"
-required-features = [ "alloc", "seed", "uses_num" ]
 
 [[example]]
 name = "adc"

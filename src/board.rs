@@ -171,18 +171,6 @@ macro_rules! board_split_audio {
 }
 
 #[macro_export]
-macro_rules! board_split_midi {
-    ($ccdr:expr, $pins:expr) => {{
-        let pins = (
-            $pins.SEED_PIN_13.into_alternate_af7(), // USART1 TX
-            $pins.SEED_PIN_14.into_alternate_af7(), // USART1 RX
-        );
-
-        daisy_bsp::midi::Interface::init(&$ccdr.clocks, $ccdr.peripheral.USART1, pins).unwrap()
-    }};
-}
-
-#[macro_export]
 macro_rules! board_split_leds {
     ($pins:expr) => {{
         daisy_bsp::led::Leds {

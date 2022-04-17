@@ -17,7 +17,6 @@ pub mod flash;
 #[cfg(any(feature = "log-itm"))]
 pub mod itm;
 pub mod led;
-pub mod midi;
 pub mod pins;
 
 // - log macros ---------------------------------------------------------------
