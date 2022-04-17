@@ -1,7 +1,7 @@
 [package]
 name = "daisy"
-version = "0.4.2"
-authors = ["Petr Horáček <hrck@protonmail.com>"]
+version = "0.1.0"
+authors = [ "Petr Horáček <hrck@protonmail.com>" ]
 edition = "2018"
 license = "MIT"
 description = "A board support package for the Electro-Smith Daisy Seed"
@@ -21,7 +21,6 @@ readme = "README.md"
 publish = false
 
 [package.metadata.docs.rs]
-features = [ "seed", "pod", "petal", "patch", "field" ]
 targets = ["thumbv7em-none-eabihf"]
 
 
@@ -29,28 +28,10 @@ targets = ["thumbv7em-none-eabihf"]
 
 [dependencies]
 cortex-m = "^0.7.1"
-cortex-m-rt = { version = "^0.6.13", features = ["device"] }
+cortex-m-rt = { version = "^0.6.13", features = [ "device" ] }
 stm32h7xx-hal = { version = "0.11.0", features = [ "stm32h750v", "rt", "revision_v", "usb_hs", "xspi" ] }
 cty = "0.2.1"
 cortex-m-semihosting = "0.3.5"
-
-# - optional dependencies used by examples
-
-[dependencies.num]
-version = "0.3.1"
-default-features = false
-features = [ "libm" ]
-optional = true
-
-[dependencies.num-derive]
-version = "0.3.3"
-default-features = false
-optional = true
-
-[dependencies.num-traits]
-version = "0.2.14"
-default-features = false
-optional = true
 
 
 # - dev dependencies ----------------------------------------------------------
@@ -64,14 +45,7 @@ panic-semihosting = { version = "0.5.6" }
 # - features ------------------------------------------------------------------
 
 [features]
-default = [ "seed" ]
-seed = []
-pod = []
-petal = []
-patch = []
-field = []
 log-itm = []
-uses_num = [ "num", "num-derive", "num-traits" ]
 
 
 # - profiles ------------------------------------------------------------------
@@ -90,16 +64,13 @@ opt-level = "s" #  optimize for binary size
 
 [[example]]
 name = "blinky"
-required-features = [ "seed" ]
 
 [[example]]
 name = "audio"
-required-features = [ "seed" ]
 
 [[example]]
 name = "adc"
-required-features = [ "seed" ]
 
 [[example]]
 name = "itm"
-required-features = [ "seed", "log-itm" ]
+required-features = [ "log-itm" ]
