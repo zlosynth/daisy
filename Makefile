@@ -20,3 +20,8 @@ check:
 .PHONY: update
 update:
 	cargo update
+
+.PHONY: flash
+flash:
+	cargo objcopy --release --example $(WHAT) -- -O binary target/program.bin
+	dfu-util -a 0 -s 0x08000000:leave -D target/program.bin -d ,0483:df11

@@ -6,6 +6,12 @@ Seed and Daisy Patch SM.
 This project was forked from
 [antoinevg/daisy_bsp](https://github.com/antoinevg/daisy_bsp).
 
+# Flash an example
+
+``` sh
+make flash WHAT=blinky
+```
+
 # Razor
 
 * This library aims to abstract all peripherals that are available on Daisy.
