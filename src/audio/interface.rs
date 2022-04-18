@@ -118,7 +118,6 @@ impl Interface {
     }
 }
 
-
 /// convert audio data from u24 to f32
 #[inline(always)]
 fn u24_to_f32(y: u32) -> f32 {
