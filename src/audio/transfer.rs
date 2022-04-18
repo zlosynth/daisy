@@ -16,7 +16,7 @@ pub type Sai1Pins = (
     Option<gpio::gpioe::PE3<gpio::Alternate<6>>>, // SD_B
 );
 
-type TransferDma1Str0 = dma::Transfer<
+type TxDma1Str0 = dma::Transfer<
     dma::dma::Stream0<pac::DMA1>,
     sai::dma::ChannelA<pac::SAI1>,
     dma::MemoryToPeripheral,
@@ -24,7 +24,7 @@ type TransferDma1Str0 = dma::Transfer<
     dma::DBTransfer,
 >;
 
-type TransferDma1Str1 = dma::Transfer<
+type RxDma1Str1 = dma::Transfer<
     dma::dma::Stream1<pac::DMA1>,
     sai::dma::ChannelB<pac::SAI1>,
     dma::PeripheralToMemory,
@@ -33,8 +33,8 @@ type TransferDma1Str1 = dma::Transfer<
 >;
 
 pub struct Transfer {
-    dma1_str0: TransferDma1Str0,
-    dma1_str1: TransferDma1Str1,
+    tx_dma1_str0: TxDma1Str0,
+    rx_dma1_str1: RxDma1Str1,
     sai1: hal::sai::Sai<pac::SAI1, hal::sai::I2S>,
 }
 
@@ -56,7 +56,7 @@ impl Transfer {
             .peripheral_increment(false)
             .circular_buffer(true)
             .fifo_enable(false);
-        let dma1_str0: dma::Transfer<_, _, dma::MemoryToPeripheral, _, _> = dma::Transfer::init(
+        let tx_dma1_str0 = dma::Transfer::init(
             dma1_streams.0,
             unsafe { pac::Peripherals::steal().SAI1.dma_ch_a() },
             tx_buffer,
@@ -67,7 +67,7 @@ impl Transfer {
         let dma_config = dma_config
             .transfer_complete_interrupt(true)
             .half_transfer_interrupt(true);
-        let dma1_str1: dma::Transfer<_, _, dma::PeripheralToMemory, _, _> = dma::Transfer::init(
+        let rx_dma1_str1 = dma::Transfer::init(
             dma1_streams.1,
             unsafe { pac::Peripherals::steal().SAI1.dma_ch_b() },
             rx_buffer,
@@ -92,8 +92,8 @@ impl Transfer {
         );
 
         Self {
-            dma1_str0,
-            dma1_str1,
+            tx_dma1_str0,
+            rx_dma1_str1,
             sai1,
         }
     }
@@ -103,15 +103,15 @@ impl Transfer {
             pac::NVIC::unmask(pac::Interrupt::DMA1_STR1);
         }
 
-        let dma1_str0 = &mut self.dma1_str0;
-        let dma1_str1 = &mut self.dma1_str1;
+        let tx_dma1_str0 = &mut self.tx_dma1_str0;
+        let rx_dma1_str1 = &mut self.rx_dma1_str1;
         let sai1 = &mut self.sai1;
 
-        dma1_str1.start(|_sai1_rb| {
+        rx_dma1_str1.start(|_sai1_rb| {
             sai1.enable_dma(SaiChannel::ChannelB);
         });
 
-        dma1_str0.start(|sai1_rb| {
+        tx_dma1_str0.start(|sai1_rb| {
             sai1.enable_dma(SaiChannel::ChannelA);
 
             // wait until sai1's fifo starts to receive data
@@ -125,11 +125,11 @@ impl Transfer {
     }
 
     pub fn examine_interrupt(&mut self) -> Result<State, ()> {
-        if self.dma1_str1.get_half_transfer_flag() {
-            self.dma1_str1.clear_half_transfer_interrupt();
+        if self.rx_dma1_str1.get_half_transfer_flag() {
+            self.rx_dma1_str1.clear_half_transfer_interrupt();
             Ok(State::HalfSent)
-        } else if self.dma1_str1.get_transfer_complete_flag() {
-            self.dma1_str1.clear_transfer_complete_interrupt();
+        } else if self.rx_dma1_str1.get_transfer_complete_flag() {
+            self.rx_dma1_str1.clear_transfer_complete_interrupt();
             Ok(State::FullSent)
         } else {
             Err(())
