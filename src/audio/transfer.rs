@@ -75,10 +75,10 @@ impl Transfer {
             dma_config,
         );
 
-        let sai1_a_config = sai::I2SChanConfig::new(sai::I2SDir::Tx)
+        let sai1_master_config = sai::I2SChanConfig::new(sai::I2SDir::Tx)
             .set_frame_sync_active_high(true)
             .set_clock_strobe(sai::I2SClockStrobe::Falling);
-        let sai1_b_config = sai::I2SChanConfig::new(sai::I2SDir::Rx)
+        let sai1_slave_config = sai::I2SChanConfig::new(sai::I2SDir::Rx)
             .set_sync_type(sai::I2SSync::Internal)
             .set_frame_sync_active_high(true)
             .set_clock_strobe(sai::I2SClockStrobe::Rising);
@@ -88,7 +88,7 @@ impl Transfer {
             sai::I2SDataSize::BITS_24,
             sai1_rec,
             clocks,
-            I2sUsers::new(sai1_a_config).add_slave(sai1_b_config),
+            I2sUsers::new(sai1_master_config).add_slave(sai1_slave_config),
         );
 
         Self {
