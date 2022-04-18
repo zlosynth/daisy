@@ -18,7 +18,6 @@ keywords = [
     "daisy",
 ]
 readme = "README.md"
-publish = false
 
 [package.metadata.docs.rs]
 targets = ["thumbv7em-none-eabihf"]
