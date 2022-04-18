@@ -1,11 +1,11 @@
 [package]
 name = "daisy"
-version = "0.1.0"
+version = "0.1.0" # hack/release.sh
 authors = [ "Petr Horáček <hrck@protonmail.com>" ]
 edition = "2018"
 license = "MIT"
 description = "A board support package for the Electro-Smith Daisy Seed"
-repository = "https://github.com/phoracek/daisy_bsp"
+repository = "https://github.com/zlosynth/daisy"
 categories = [
     "embedded",
     "hardware-support",
