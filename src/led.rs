@@ -1,8 +1,4 @@
-use hal::hal as embedded_hal;
-pub use stm32h7xx_hal as hal;
-
-use embedded_hal::digital::v2::OutputPin;
-use hal::gpio;
+use stm32h7xx_hal::gpio;
 
 // - traits -------------------------------------------------------------------
 
@@ -25,17 +21,18 @@ pub struct Leds {
 pub struct LedUser(pub gpio::gpioc::PC7<gpio::Output<gpio::PushPull>>);
 
 impl LedUser {
-    pub fn new<Mode>(pin: gpio::gpioc::PC7<Mode>) -> Self {
+    // TODO: https://github.com/stm32-rs/stm32h7xx-hal/pull/354
+    pub fn new(pin: gpio::gpioc::PC7<gpio::Analog>) -> Self {
         LedUser(pin.into_push_pull_output())
     }
 }
 
 impl Led for LedUser {
     fn on(&mut self) {
-        self.0.set_high().unwrap();
+        self.0.set_high();
     }
 
     fn off(&mut self) {
-        self.0.set_low().unwrap();
+        self.0.set_low();
     }
 }

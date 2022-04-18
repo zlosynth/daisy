@@ -113,7 +113,7 @@ impl Interface {
 
     fn invoke_callback(&mut self, block: &mut Block) {
         if let Some(function_ptr) = self.function_ptr.as_mut() {
-            function_ptr(self.fs.0 as f32, block);
+            function_ptr(self.fs.to_Hz() as f32, block);
         }
     }
 }

@@ -15,9 +15,6 @@ use hal::delay::Delay;
 use hal::prelude::*;
 use hal::rcc::rec::AdcClkSel;
 
-use embedded_hal::digital::v2::OutputPin;
-use hal::hal as embedded_hal;
-
 #[entry]
 fn main() -> ! {
     // - board setup ----------------------------------------------------------
@@ -50,7 +47,7 @@ fn main() -> ! {
 
     // - main loop ------------------------------------------------------------
 
-    let scale_factor = ccdr.clocks.sys_ck().0 as f32 / 65_535.;
+    let scale_factor = ccdr.clocks.sys_ck().to_Hz() as f32 / 65_535.;
 
     loop {
         let pot_1: u32 = adc1.read(&mut adc1_channel_4).unwrap();
@@ -58,10 +55,10 @@ fn main() -> ! {
 
         let ticks = (pot_1 as f32 * scale_factor) as u32;
 
-        led_user.set_high().unwrap();
+        led_user.set_high();
         asm::delay(ticks);
 
-        led_user.set_low().unwrap();
+        led_user.set_low();
         asm::delay(ticks);
     }
 }

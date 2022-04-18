@@ -68,7 +68,7 @@ fn main() -> ! {
 
     // - main loop ------------------------------------------------------------
 
-    let one_second = ccdr.clocks.sys_ck().0;
+    let one_second = ccdr.clocks.sys_ck().to_Hz();
 
     loop {
         led_user.on();

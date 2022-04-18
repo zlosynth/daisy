@@ -8,11 +8,11 @@ use hal::pac;
 use super::{DMA_BUFFER_LENGTH, FS};
 
 pub type Sai1Pins = (
-    gpio::gpioe::PE2<gpio::Alternate<gpio::AF6>>, // MCLK_A
-    gpio::gpioe::PE5<gpio::Alternate<gpio::AF6>>, // SCK_A
-    gpio::gpioe::PE4<gpio::Alternate<gpio::AF6>>, // FS_A
-    gpio::gpioe::PE6<gpio::Alternate<gpio::AF6>>, // SD_A
-    Option<gpio::gpioe::PE3<gpio::Alternate<gpio::AF6>>>, // SD_B
+    gpio::gpioe::PE2<gpio::Alternate<6>>,         // MCLK_A
+    gpio::gpioe::PE5<gpio::Alternate<6>>,         // SCK_A
+    gpio::gpioe::PE4<gpio::Alternate<6>>,         // FS_A
+    gpio::gpioe::PE6<gpio::Alternate<6>>,         // SD_A
+    Option<gpio::gpioe::PE3<gpio::Alternate<6>>>, // SD_B
 );
 
 type TransferDma1Str0 = dma::Transfer<

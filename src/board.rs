@@ -153,11 +153,11 @@ macro_rules! board_split_audio {
     ($ccdr:expr, $pins:expr) => {{
         let codec_pins = ($pins.AK4556.PDN.into_push_pull_output(),);
         let sai1_pins = (
-            $pins.AK4556.MCLK_A.into_alternate_af6(),
-            $pins.AK4556.SCK_A.into_alternate_af6(),
-            $pins.AK4556.FS_A.into_alternate_af6(),
-            $pins.AK4556.SD_A.into_alternate_af6(),
-            Some($pins.AK4556.SD_B.into_alternate_af6()),
+            $pins.AK4556.MCLK_A.into_alternate::<6>(),
+            $pins.AK4556.SCK_A.into_alternate::<6>(),
+            $pins.AK4556.FS_A.into_alternate::<6>(),
+            $pins.AK4556.SD_A.into_alternate::<6>(),
+            Some($pins.AK4556.SD_B.into_alternate::<6>()),
         );
 
         let sai1_prec = $ccdr

@@ -52,17 +52,23 @@ impl Flash {
         pins: FMCPins,
     ) -> Self {
         // Even though it is not directly used, CS pin must be acquired and configured
-        let _cs = pins.CS.into_alternate_af10().set_speed(Speed::VeryHigh);
+        let mut cs = pins.CS.into_alternate::<10>();
+        let mut sck = pins.SCK.into_alternate::<9>();
+        let mut io0 = pins.IO0.into_alternate::<10>();
+        let mut io1 = pins.IO1.into_alternate::<10>();
+        let mut io2 = pins.IO2.into_alternate::<9>();
+        let mut io3 = pins.IO3.into_alternate::<9>();
 
-        let sck = pins.SCK.into_alternate_af9().set_speed(Speed::VeryHigh);
-        let io0 = pins.IO0.into_alternate_af10().set_speed(Speed::VeryHigh);
-        let io1 = pins.IO1.into_alternate_af10().set_speed(Speed::VeryHigh);
-        let io2 = pins.IO2.into_alternate_af9().set_speed(Speed::VeryHigh);
-        let io3 = pins.IO3.into_alternate_af9().set_speed(Speed::VeryHigh);
+        cs.set_speed(Speed::VeryHigh);
+        sck.set_speed(Speed::VeryHigh);
+        io0.set_speed(Speed::VeryHigh);
+        io1.set_speed(Speed::VeryHigh);
+        io2.set_speed(Speed::VeryHigh);
+        io3.set_speed(Speed::VeryHigh);
 
         let qspi = qspi_device.bank1(
             (sck, io0, io1, io2, io3),
-            Config::new(133.mhz()).mode(QspiMode::OneBit),
+            Config::new(133.MHz()).mode(QspiMode::OneBit),
             clocks,
             qspi_peripheral,
         );

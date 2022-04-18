@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+* Update to stm32h7xx HAL 0.12.
+
 ## 0.1.0
 
 * Initial fork from [antoinevg/daisy_bsp](https://github.com/antoinevg/daisy_bsp).

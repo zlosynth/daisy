@@ -1,7 +1,5 @@
 use cortex_m::asm;
-use embedded_hal::digital::v2::OutputPin;
 use hal::gpio;
-use hal::hal as embedded_hal;
 use stm32h7xx_hal as hal;
 
 type ResetPin = gpio::gpiob::PB11<gpio::Output<gpio::PushPull>>; // PDN
@@ -18,8 +16,8 @@ impl Codec {
     }
 
     pub fn start(&mut self) {
-        self.reset.set_low().unwrap();
+        self.reset.set_low();
         asm::delay(480_000); // ~ 1ms (datasheet specifies minimum 150ns)
-        self.reset.set_high().unwrap();
+        self.reset.set_high();
     }
 }
