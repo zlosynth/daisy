@@ -1,5 +1,6 @@
 use hal::dma;
 use hal::gpio;
+use hal::prelude::*;
 use hal::sai::{self, I2sUsers, SaiChannel, SaiI2sExt};
 use stm32h7xx_hal as hal;
 
@@ -17,7 +18,7 @@ pub type Sai1Pins = (
 
 type TransferDma1Str0 = dma::Transfer<
     dma::dma::Stream0<pac::DMA1>,
-    pac::SAI1,
+    sai::dma::ChannelA<pac::SAI1>,
     dma::MemoryToPeripheral,
     &'static mut [u32; DMA_BUFFER_LENGTH],
     dma::DBTransfer,
@@ -25,7 +26,7 @@ type TransferDma1Str0 = dma::Transfer<
 
 type TransferDma1Str1 = dma::Transfer<
     dma::dma::Stream1<pac::DMA1>,
-    pac::SAI1,
+    sai::dma::ChannelB<pac::SAI1>,
     dma::PeripheralToMemory,
     &'static mut [u32; DMA_BUFFER_LENGTH],
     dma::DBTransfer,
@@ -57,7 +58,7 @@ impl Transfer {
             .fifo_enable(false);
         let dma1_str0: dma::Transfer<_, _, dma::MemoryToPeripheral, _, _> = dma::Transfer::init(
             dma1_streams.0,
-            unsafe { pac::Peripherals::steal().SAI1 },
+            unsafe { pac::Peripherals::steal().SAI1.dma_ch_a() },
             tx_buffer,
             None,
             dma_config,
@@ -68,7 +69,7 @@ impl Transfer {
             .half_transfer_interrupt(true);
         let dma1_str1: dma::Transfer<_, _, dma::PeripheralToMemory, _, _> = dma::Transfer::init(
             dma1_streams.1,
-            unsafe { pac::Peripherals::steal().SAI1 },
+            unsafe { pac::Peripherals::steal().SAI1.dma_ch_b() },
             rx_buffer,
             None,
             dma_config,
