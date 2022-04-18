@@ -151,13 +151,13 @@ macro_rules! board_split_gpios {
 #[macro_export]
 macro_rules! board_split_audio {
     ($ccdr:expr, $pins:expr) => {{
-        let pins = (
-            $pins.AK4556.PDN.into_push_pull_output(),
+        let codec_pins = ($pins.AK4556.PDN.into_push_pull_output(),);
+        let sai1_pins = (
             $pins.AK4556.MCLK_A.into_alternate_af6(),
             $pins.AK4556.SCK_A.into_alternate_af6(),
             $pins.AK4556.FS_A.into_alternate_af6(),
             $pins.AK4556.SD_A.into_alternate_af6(),
-            $pins.AK4556.SD_B.into_alternate_af6(),
+            Some($pins.AK4556.SD_B.into_alternate_af6()),
         );
 
         let sai1_prec = $ccdr
@@ -165,8 +165,14 @@ macro_rules! board_split_audio {
             .SAI1
             .kernel_clk_mux(daisy::hal::rcc::rec::Sai1ClkSel::PLL3_P);
 
-        daisy::audio::Interface::init(&$ccdr.clocks, sai1_prec, pins, $ccdr.peripheral.DMA1)
-            .unwrap()
+        daisy::audio::Interface::init(
+            &$ccdr.clocks,
+            sai1_prec,
+            codec_pins,
+            sai1_pins,
+            $ccdr.peripheral.DMA1,
+        )
+        .unwrap()
     }};
 }
 

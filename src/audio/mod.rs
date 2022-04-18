@@ -1,6 +1,7 @@
 use hal::time;
 use stm32h7xx_hal as hal;
 
+mod codec;
 pub mod interface;
 mod transfer;
 

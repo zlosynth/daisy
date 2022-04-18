@@ -1,11 +1,8 @@
-use hal::gpio;
 use hal::time;
 use stm32h7xx_hal as hal;
 
-use embedded_hal::digital::v2::OutputPin;
-use hal::hal as embedded_hal;
-
-use super::transfer::{State, Transfer};
+use super::codec::{Codec, Pins as CodecPins};
+use super::transfer::{Sai1Pins, State, Transfer};
 use super::{BLOCK_LENGTH, DMA_BUFFER_LENGTH, FS, HALF_DMA_BUFFER_LENGTH};
 
 // - static data --------------------------------------------------------------
@@ -20,15 +17,6 @@ static mut RX_BUFFER: [u32; DMA_BUFFER_LENGTH] = [0; DMA_BUFFER_LENGTH];
 pub type Frame = (f32, f32);
 pub type Block = [Frame; BLOCK_LENGTH];
 
-pub type CodecPins = (
-    gpio::gpiob::PB11<gpio::Output<gpio::PushPull>>, // PDN
-    gpio::gpioe::PE2<gpio::Alternate<gpio::AF6>>,    // MCLK_A
-    gpio::gpioe::PE5<gpio::Alternate<gpio::AF6>>,    // SCK_A
-    gpio::gpioe::PE4<gpio::Alternate<gpio::AF6>>,    // FS_A
-    gpio::gpioe::PE6<gpio::Alternate<gpio::AF6>>,    // SD_A
-    gpio::gpioe::PE3<gpio::Alternate<gpio::AF6>>,    // SD_B
-);
-
 // - Error --------------------------------------------------------------------
 
 #[derive(Debug)]
@@ -39,25 +27,22 @@ pub enum Error {
 
 // - audio::Interface ---------------------------------------------------------
 
-pub struct Interface<'a> {
+pub struct Interface {
     pub fs: time::Hertz,
-
-    function_ptr: Option<fn(f32, &mut Block)>,
-
-    ak4556_reset: Option<gpio::gpiob::PB11<gpio::Output<gpio::PushPull>>>,
+    codec: Codec,
     transfer: Transfer,
-
-    _marker: core::marker::PhantomData<&'a ()>,
+    function_ptr: Option<fn(f32, &mut Block)>,
 }
 
-impl<'a> Interface<'a> {
+impl Interface {
     pub fn init(
         clocks: &hal::rcc::CoreClocks,
         sai1_rec: hal::rcc::rec::Sai1, // reset and enable control
-        pins: CodecPins,
+        codec_pins: CodecPins,
+        sai1_pins: Sai1Pins,
         dma1_rec: hal::rcc::rec::Dma1,
-    ) -> Result<Interface<'a>, Error> {
-        let sai1_pins = (pins.1, pins.2, pins.3, pins.4, Some(pins.5));
+    ) -> Result<Interface, Error> {
+        let codec = Codec::init(codec_pins);
         let transfer = Transfer::init(
             clocks,
             sai1_rec,
@@ -69,37 +54,18 @@ impl<'a> Interface<'a> {
 
         Ok(Self {
             fs: FS,
-
-            function_ptr: None,
-
-            ak4556_reset: Some(pins.0),
+            codec,
             transfer,
-
-            _marker: core::marker::PhantomData,
+            function_ptr: None,
         })
     }
 
     /// assign function pointer for interrupt callback and start audio
     pub fn spawn(mut self, function_ptr: fn(f32, &mut Block)) -> Result<Self, Error> {
         self.function_ptr = Some(function_ptr);
-        self.start()?;
-        Ok(self) // TODO type state for started audio interface
-    }
-
-    fn start(&mut self) -> Result<(), Error> {
-        // - AK4556 -----------------------------------------------------------
-
-        let ak4556_reset = self.ak4556_reset.as_mut().unwrap();
-        ak4556_reset.set_low().unwrap();
-        use cortex_m::asm;
-        asm::delay(480_000); // ~ 1ms (datasheet specifies minimum 150ns)
-        ak4556_reset.set_high().unwrap();
-
-        // - start audio ------------------------------------------------------
-
+        self.codec.start();
         self.transfer.start();
-
-        Ok(())
+        Ok(self)
     }
 
     pub fn handle_interrupt_dma1_str1(&mut self) -> Result<(), Error> {

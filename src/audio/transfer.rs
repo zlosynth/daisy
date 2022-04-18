@@ -46,12 +46,9 @@ impl Transfer {
         tx_buffer: &'static mut [u32; DMA_BUFFER_LENGTH],
         rx_buffer: &'static mut [u32; DMA_BUFFER_LENGTH],
     ) -> Self {
-        // - configure dma1 ---------------------------------------------------
-
         let dma1_streams =
             dma::dma::StreamsTuple::new(unsafe { pac::Peripherals::steal().DMA1 }, dma1_rec);
 
-        // dma1 stream 0
         let dma_config = dma::dma::DmaConfig::default()
             .priority(dma::config::Priority::High)
             .memory_increment(true)
@@ -66,7 +63,6 @@ impl Transfer {
             dma_config,
         );
 
-        // dma1 stream 1
         let dma_config = dma_config
             .transfer_complete_interrupt(true)
             .half_transfer_interrupt(true);
@@ -78,17 +74,13 @@ impl Transfer {
             dma_config,
         );
 
-        // - configure sai1 ---------------------------------------------------
-
         let sai1_a_config = sai::I2SChanConfig::new(sai::I2SDir::Tx)
             .set_frame_sync_active_high(true)
             .set_clock_strobe(sai::I2SClockStrobe::Falling);
-
         let sai1_b_config = sai::I2SChanConfig::new(sai::I2SDir::Rx)
             .set_sync_type(sai::I2SSync::Internal)
             .set_frame_sync_active_high(true)
             .set_clock_strobe(sai::I2SClockStrobe::Rising);
-
         let sai1 = unsafe { pac::Peripherals::steal().SAI1 }.i2s_ch_a(
             sai1_pins,
             FS,
