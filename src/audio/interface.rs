@@ -1,3 +1,5 @@
+use core::num::Wrapping;
+
 use hal::time;
 use stm32h7xx_hal as hal;
 
@@ -5,27 +7,19 @@ use super::codec::{Codec, Pins as CodecPins};
 use super::transfer::{Sai1Pins, State, Transfer};
 use super::{BLOCK_LENGTH, DMA_BUFFER_LENGTH, FS, HALF_DMA_BUFFER_LENGTH};
 
-// - static data --------------------------------------------------------------
-
 #[link_section = ".sram1_bss"]
 static mut TX_BUFFER: [u32; DMA_BUFFER_LENGTH] = [0; DMA_BUFFER_LENGTH];
 #[link_section = ".sram1_bss"]
 static mut RX_BUFFER: [u32; DMA_BUFFER_LENGTH] = [0; DMA_BUFFER_LENGTH];
 
-// - types --------------------------------------------------------------------
-
 pub type Frame = (f32, f32);
 pub type Block = [Frame; BLOCK_LENGTH];
-
-// - Error --------------------------------------------------------------------
 
 #[derive(Debug)]
 pub enum Error {
     I2c,
     Dma,
 }
-
-// - audio::Interface ---------------------------------------------------------
 
 pub struct Interface {
     pub fs: time::Hertz,
@@ -124,9 +118,6 @@ impl Interface {
     }
 }
 
-// - conversion helpers -------------------------------------------------------
-
-use core::num::Wrapping;
 
 /// convert audio data from u24 to f32
 #[inline(always)]
