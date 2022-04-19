@@ -49,6 +49,7 @@ impl Board {
     /// Takes the board's GPIO peripherals and split them into ZST's
     /// representing the individual GPIO pins used by the board.
     #[allow(clippy::too_many_arguments)]
+    #[allow(unused_variables)] // GPIO H is only utilized on Daisy 1.1
     pub fn split_gpios(
         &self,
         gpioa: hal::gpio::gpioa::Parts,
@@ -58,6 +59,7 @@ impl Board {
         gpioe: hal::gpio::gpioe::Parts,
         gpiof: hal::gpio::gpiof::Parts,
         gpiog: hal::gpio::gpiog::Parts,
+        gpioh: hal::gpio::gpioh::Parts,
     ) -> Pins {
         Pins {
             SEED_PIN_0: gpiob.pb12,
@@ -92,8 +94,14 @@ impl Board {
             SEED_PIN_29: gpiob.pb14,
             SEED_PIN_30: gpiob.pb15,
             LED_USER: gpioc.pc7,
+            #[cfg(feature = "seed_1_0")]
             CODEC: CodecPins {
-                PDN: gpiob.pb11, // Codec Reset
+                PDN: gpiob.pb11, // Codec Reset (AK4556)
+            },
+            #[cfg(feature = "seed_1_1")]
+            CODEC: CodecPins {
+                SCL: gpioh.ph4,  // I2C2 SCL (WM8731)
+                SDA: gpiob.pb11, // I2C2 SDA (WM8731)
             },
             SAI: SaiPins {
                 MCLK_A: gpioe.pe2, // SAI1 MCLK_A
@@ -146,6 +154,7 @@ macro_rules! board_split_gpios {
             $dp.GPIOE.split($ccdr.peripheral.GPIOE),
             $dp.GPIOF.split($ccdr.peripheral.GPIOF),
             $dp.GPIOG.split($ccdr.peripheral.GPIOG),
+            $dp.GPIOH.split($ccdr.peripheral.GPIOH),
         )
     }};
 }
@@ -153,7 +162,15 @@ macro_rules! board_split_gpios {
 #[macro_export]
 macro_rules! board_split_audio {
     ($ccdr:expr, $pins:expr) => {{
+        #[cfg(feature = "seed_1_0")]
         let codec_pins = ($pins.CODEC.PDN.into_push_pull_output(),);
+
+        #[cfg(feature = "seed_1_1")]
+        let codec_pins = (
+            $pins.CODEC.SCL.into_alternate::<4>(),
+            $pins.CODEC.SDA.into_alternate::<4>(),
+        );
+
         let sai1_pins = (
             $pins.SAI.MCLK_A.into_alternate::<6>(),
             $pins.SAI.SCK_A.into_alternate::<6>(),
