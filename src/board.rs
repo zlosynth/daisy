@@ -92,8 +92,10 @@ impl Board {
             SEED_PIN_29: gpiob.pb14,
             SEED_PIN_30: gpiob.pb15,
             LED_USER: gpioc.pc7,
-            AK4556: AK4556Pins {
-                PDN: gpiob.pb11,   // Codec Reset
+            CODEC: CodecPins {
+                PDN: gpiob.pb11, // Codec Reset
+            },
+            SAI: SaiPins {
                 MCLK_A: gpioe.pe2, // SAI1 MCLK_A
                 SCK_A: gpioe.pe5,  // SAI1 SCK_A
                 FS_A: gpioe.pe4,   // SAI1 FS_A
@@ -151,13 +153,13 @@ macro_rules! board_split_gpios {
 #[macro_export]
 macro_rules! board_split_audio {
     ($ccdr:expr, $pins:expr) => {{
-        let codec_pins = ($pins.AK4556.PDN.into_push_pull_output(),);
+        let codec_pins = ($pins.CODEC.PDN.into_push_pull_output(),);
         let sai1_pins = (
-            $pins.AK4556.MCLK_A.into_alternate::<6>(),
-            $pins.AK4556.SCK_A.into_alternate::<6>(),
-            $pins.AK4556.FS_A.into_alternate::<6>(),
-            $pins.AK4556.SD_A.into_alternate::<6>(),
-            Some($pins.AK4556.SD_B.into_alternate::<6>()),
+            $pins.SAI.MCLK_A.into_alternate::<6>(),
+            $pins.SAI.SCK_A.into_alternate::<6>(),
+            $pins.SAI.FS_A.into_alternate::<6>(),
+            $pins.SAI.SD_A.into_alternate::<6>(),
+            Some($pins.SAI.SD_B.into_alternate::<6>()),
         );
 
         let sai1_prec = $ccdr
