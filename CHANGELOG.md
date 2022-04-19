@@ -6,6 +6,9 @@ backwards compatibility.
 
 ## Unreleased
 
+* Remove unneeded `cty` dependency.
+* Rename `seed_1_0` feature to `seed`.
+
 ## 0.2.0
 
 * Update to stm32h7xx HAL 0.12.
