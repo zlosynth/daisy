@@ -32,11 +32,16 @@ impl Interface {
     pub fn init(
         clocks: &hal::rcc::CoreClocks,
         sai1_rec: hal::rcc::rec::Sai1,
-        codec_pins: CodecPins,
         sai1_pins: Sai1Pins,
+        codec_pins: CodecPins,
+        #[allow(unused_variables)] // i2c2 is not used on Seed 1.0
+        i2c2_rec: hal::rcc::rec::I2c2,
         dma1_rec: hal::rcc::rec::Dma1,
     ) -> Result<Interface, Error> {
+        #[cfg(feature = "seed_1_0")]
         let codec = Codec::init(codec_pins);
+        #[cfg(feature = "seed_1_1")]
+        let codec = Codec::init(clocks, i2c2_rec, codec_pins);
 
         #[cfg(feature = "seed_1_0")]
         let transfer_config = TransferConfig {
@@ -45,13 +50,12 @@ impl Interface {
             tx_sync: Sync::Master,
             rx_sync: Sync::Slave,
         };
-
         #[cfg(feature = "seed_1_1")]
         let transfer_config = TransferConfig {
             tx_channel: Channel::B,
             rx_channel: Channel::A,
-            tx_sync: Sync::Master,
-            rx_sync: Sync::Slave,
+            tx_sync: Sync::Slave,
+            rx_sync: Sync::Master,
         };
 
         let transfer = Transfer::init(

@@ -49,7 +49,6 @@ impl Board {
     /// Takes the board's GPIO peripherals and split them into ZST's
     /// representing the individual GPIO pins used by the board.
     #[allow(clippy::too_many_arguments)]
-    #[allow(unused_variables)] // GPIO H is only utilized on Daisy 1.1
     pub fn split_gpios(
         &self,
         gpioa: hal::gpio::gpioa::Parts,
@@ -59,6 +58,7 @@ impl Board {
         gpioe: hal::gpio::gpioe::Parts,
         gpiof: hal::gpio::gpiof::Parts,
         gpiog: hal::gpio::gpiog::Parts,
+        #[allow(unused_variables)] // GPIO H is only utilized on Daisy 1.1
         gpioh: hal::gpio::gpioh::Parts,
     ) -> Pins {
         Pins {
@@ -167,8 +167,8 @@ macro_rules! board_split_audio {
 
         #[cfg(feature = "seed_1_1")]
         let codec_pins = (
-            $pins.CODEC.SCL.into_alternate::<4>(),
-            $pins.CODEC.SDA.into_alternate::<4>(),
+            $pins.CODEC.SCL.into_alternate::<4>().set_open_drain(),
+            $pins.CODEC.SDA.into_alternate::<4>().set_open_drain(),
         );
 
         let sai1_pins = (
@@ -187,8 +187,9 @@ macro_rules! board_split_audio {
         daisy::audio::Interface::init(
             &$ccdr.clocks,
             sai1_prec,
-            codec_pins,
             sai1_pins,
+            codec_pins,
+            $ccdr.peripheral.I2C2,
             $ccdr.peripheral.DMA1,
         )
         .unwrap()

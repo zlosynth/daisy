@@ -7,6 +7,7 @@ backwards compatibility.
 ## Unreleased
 
 * Update to stm32h7xx HAL 0.12.
+* Introduce support for Daisy Seed 1.1, with WM8731 codec.
 
 ## 0.1.0
 
