@@ -15,7 +15,9 @@ compile_error!("only a single target board must be selected");
 compile_error!("only a single target board must be selected");
 
 #[cfg(not(any(feature = "seed_1_1", feature = "seed", feature = "patch_sm")))]
-compile_error!("target board must be selected using a feature: \"seed_1_1\" | \"seed\" | \"patch_sm\"");
+compile_error!(
+    "target board must be selected using a feature: \"seed_1_1\" | \"seed\" | \"patch_sm\""
+);
 
 // - modules ------------------------------------------------------------------
 

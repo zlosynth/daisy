@@ -2,37 +2,41 @@ use stm32h7xx_hal as hal;
 
 // - types --------------------------------------------------------------------
 
-pub type SeedPin0 = hal::gpio::gpiob::PB12<hal::gpio::Analog>; // PIN_01, USB OTG ID, I2C3 SCL
-pub type SeedPin1 = hal::gpio::gpioc::PC11<hal::gpio::Analog>; // PIN_02, SD Data3, USART3 Rx
-pub type SeedPin2 = hal::gpio::gpioc::PC10<hal::gpio::Analog>; // PIN_03, SD Data2, USART3 Tx
-pub type SeedPin3 = hal::gpio::gpioc::PC9<hal::gpio::Analog>; // PIN_04, SD Data1, I2C3 SDA
-pub type SeedPin4 = hal::gpio::gpioc::PC8<hal::gpio::Analog>; // PIN_05, SD Data0
-pub type SeedPin5 = hal::gpio::gpiod::PD2<hal::gpio::Analog>; // PIN_06, SD CMD, UART5 Rx
-pub type SeedPin6 = hal::gpio::gpioc::PC12<hal::gpio::Analog>; // PIN_07, SD CLK, UART5 Tx
-pub type SeedPin7 = hal::gpio::gpiog::PG10<hal::gpio::Analog>; // PIN_08, SPI1 CS
-pub type SeedPin8 = hal::gpio::gpiog::PG11<hal::gpio::Analog>; // PIN_09, SPI1 SCK, SPDIFRX1
-pub type SeedPin9 = hal::gpio::gpiob::PB4<hal::gpio::Alternate<0>>; // PIN_10, SPI1 MOSI
-pub type SeedPin10 = hal::gpio::gpiob::PB5<hal::gpio::Analog>; // PIN_11, SPI1 MISO
-pub type SeedPin11 = hal::gpio::gpiob::PB8<hal::gpio::Analog>; // PIN_12, I2C1 SCL, UART4 Rx
-pub type SeedPin12 = hal::gpio::gpiob::PB9<hal::gpio::Analog>; // PIN_13, I2C1 SDA, UART4 Tx
-pub type SeedPin13 = hal::gpio::gpiob::PB6<hal::gpio::Analog>; // PIN_14, USART1 Tx, I2C4 SCL
-pub type SeedPin14 = hal::gpio::gpiob::PB7<hal::gpio::Analog>; // PIN_15, USART1 Rx, I2C4 SDA
-pub type SeedPin15 = hal::gpio::gpioc::PC0<hal::gpio::Analog>; // PIN_22, ADC 0
-pub type SeedPin16 = hal::gpio::gpioa::PA3<hal::gpio::Analog>; // PIN_23, ADC 1
-pub type SeedPin17 = hal::gpio::gpiob::PB1<hal::gpio::Analog>; // PIN_24, ADC 2
-pub type SeedPin18 = hal::gpio::gpioa::PA7<hal::gpio::Analog>; // PIN_25, ADC 3
-pub type SeedPin19 = hal::gpio::gpioa::PA6<hal::gpio::Analog>; // PIN_26, ADC 4
-pub type SeedPin20 = hal::gpio::gpioc::PC1<hal::gpio::Analog>; // PIN_27, ADC 5
-pub type SeedPin21 = hal::gpio::gpioc::PC4<hal::gpio::Analog>; // PIN_28, ADC 6
-pub type SeedPin22 = hal::gpio::gpioa::PA5<hal::gpio::Analog>; // PIN_29, DAC OUT 2, ADC 7
-pub type SeedPin23 = hal::gpio::gpioa::PA4<hal::gpio::Analog>; // PIN_30, DAC OUT 1, ADC 8
-pub type SeedPin24 = hal::gpio::gpioa::PA1<hal::gpio::Analog>; // PIN_31, SAI2 MCLK, ADC 9
-pub type SeedPin25 = hal::gpio::gpioa::PA0<hal::gpio::Analog>; // PIN_32, SAI2 SD B, ADC 10
-pub type SeedPin26 = hal::gpio::gpiod::PD11<hal::gpio::Analog>; // PIN_33, SAI2 SD A
-pub type SeedPin27 = hal::gpio::gpiog::PG9<hal::gpio::Analog>; // PIN_34, SAI2 SD FS
-pub type SeedPin28 = hal::gpio::gpioa::PA2<hal::gpio::Analog>; // PIN_35, SAI2 SCK, ADC 11
-pub type SeedPin29 = hal::gpio::gpiob::PB14<hal::gpio::Analog>; // PIN_36, USB1 D-, USART1 Tx
-pub type SeedPin30 = hal::gpio::gpiob::PB15<hal::gpio::Analog>; // PIN_37, USB1 D+, USART1 Rx
+#[cfg(any(feature = "seed", feature = "seed_1_1"))]
+#[allow(non_snake_case)]
+pub struct Gpio {
+    pub PIN_0: hal::gpio::gpiob::PB12<hal::gpio::Analog>, // STM PIN 01, USB OTG ID, I2C3 SCL
+    pub PIN_1: hal::gpio::gpioc::PC11<hal::gpio::Analog>, // STM PIN 02, SD Data3, USART3 Rx
+    pub PIN_2: hal::gpio::gpioc::PC10<hal::gpio::Analog>, // STM PIN 03, SD Data2, USART3 Tx
+    pub PIN_3: hal::gpio::gpioc::PC9<hal::gpio::Analog>,  // STM PIN 04, SD Data1, I2C3 SDA
+    pub PIN_4: hal::gpio::gpioc::PC8<hal::gpio::Analog>,  // STM PIN 05, SD Data0
+    pub PIN_5: hal::gpio::gpiod::PD2<hal::gpio::Analog>,  // STM PIN 06, SD CMD, UART5 Rx
+    pub PIN_6: hal::gpio::gpioc::PC12<hal::gpio::Analog>, // STM PIN 07, SD CLK, UART5 Tx
+    pub PIN_7: hal::gpio::gpiog::PG10<hal::gpio::Analog>, // STM PIN 08, SPI1 CS
+    pub PIN_8: hal::gpio::gpiog::PG11<hal::gpio::Analog>, // STM PIN 09, SPI1 SCK, SPDIFRX1
+    pub PIN_9: hal::gpio::gpiob::PB4<hal::gpio::Alternate<0>>, // STM PIN 10, SPI1 MOSI
+    pub PIN_10: hal::gpio::gpiob::PB5<hal::gpio::Analog>, // STM PIN 11, SPI1 MISO
+    pub PIN_11: hal::gpio::gpiob::PB8<hal::gpio::Analog>, // STM PIN 12, I2C1 SCL, UART4 Rx
+    pub PIN_12: hal::gpio::gpiob::PB9<hal::gpio::Analog>, // STM PIN 13, I2C1 SDA, UART4 Tx
+    pub PIN_13: hal::gpio::gpiob::PB6<hal::gpio::Analog>, // STM PIN 14, USART1 Tx, I2C4 SCL
+    pub PIN_14: hal::gpio::gpiob::PB7<hal::gpio::Analog>, // STM PIN 15, USART1 Rx, I2C4 SDA
+    pub PIN_15: hal::gpio::gpioc::PC0<hal::gpio::Analog>, // STM PIN 22, ADC 0
+    pub PIN_16: hal::gpio::gpioa::PA3<hal::gpio::Analog>, // STM PIN 23, ADC 1
+    pub PIN_17: hal::gpio::gpiob::PB1<hal::gpio::Analog>, // STM PIN 24, ADC 2
+    pub PIN_18: hal::gpio::gpioa::PA7<hal::gpio::Analog>, // STM PIN 25, ADC 3
+    pub PIN_19: hal::gpio::gpioa::PA6<hal::gpio::Analog>, // STM PIN 26, ADC 4
+    pub PIN_20: hal::gpio::gpioc::PC1<hal::gpio::Analog>, // STM PIN 27, ADC 5
+    pub PIN_21: hal::gpio::gpioc::PC4<hal::gpio::Analog>, // STM PIN 28, ADC 6
+    pub PIN_22: hal::gpio::gpioa::PA5<hal::gpio::Analog>, // STM PIN 29, DAC OUT 2, ADC 7
+    pub PIN_23: hal::gpio::gpioa::PA4<hal::gpio::Analog>, // STM PIN 30, DAC OUT 1, ADC 8
+    pub PIN_24: hal::gpio::gpioa::PA1<hal::gpio::Analog>, // STM PIN 31, SAI2 MCLK, ADC 9
+    pub PIN_25: hal::gpio::gpioa::PA0<hal::gpio::Analog>, // STM PIN 32, SAI2 SD B, ADC 10
+    pub PIN_26: hal::gpio::gpiod::PD11<hal::gpio::Analog>, // STM PIN 33, SAI2 SD A
+    pub PIN_27: hal::gpio::gpiog::PG9<hal::gpio::Analog>, // STM PIN 34, SAI2 SD FS
+    pub PIN_28: hal::gpio::gpioa::PA2<hal::gpio::Analog>, // STM PIN 35, SAI2 SCK, ADC 11
+    pub PIN_29: hal::gpio::gpiob::PB14<hal::gpio::Analog>, // STM PIN 36, USB1 D-, USART1 Tx
+    pub PIN_30: hal::gpio::gpiob::PB15<hal::gpio::Analog>, // STM PIN 37, USB1 D+, USART1 Rx
+}
 
 pub type LedUserPin = hal::gpio::gpioc::PC7<hal::gpio::Analog>; // LED_USER
 
@@ -80,37 +84,7 @@ pub struct FMCPins {
 #[allow(non_snake_case)]
 pub struct Pins {
     // https://github.com/electro-smith/DaisyWiki/wiki/2.-Daisy-Seed-Pinout
-    pub SEED_PIN_0: SeedPin0,
-    pub SEED_PIN_1: SeedPin1,
-    pub SEED_PIN_2: SeedPin2,
-    pub SEED_PIN_3: SeedPin3,
-    pub SEED_PIN_4: SeedPin4,
-    pub SEED_PIN_5: SeedPin5,
-    pub SEED_PIN_6: SeedPin6,
-    pub SEED_PIN_7: SeedPin7,
-    pub SEED_PIN_8: SeedPin8,
-    pub SEED_PIN_9: SeedPin9,
-    pub SEED_PIN_10: SeedPin10,
-    pub SEED_PIN_11: SeedPin11,
-    pub SEED_PIN_12: SeedPin12,
-    pub SEED_PIN_13: SeedPin13,
-    pub SEED_PIN_14: SeedPin14,
-    pub SEED_PIN_15: SeedPin15,
-    pub SEED_PIN_16: SeedPin16,
-    pub SEED_PIN_17: SeedPin17,
-    pub SEED_PIN_18: SeedPin18,
-    pub SEED_PIN_19: SeedPin19,
-    pub SEED_PIN_20: SeedPin20,
-    pub SEED_PIN_21: SeedPin21,
-    pub SEED_PIN_22: SeedPin22,
-    pub SEED_PIN_23: SeedPin23,
-    pub SEED_PIN_24: SeedPin24,
-    pub SEED_PIN_25: SeedPin25,
-    pub SEED_PIN_26: SeedPin26,
-    pub SEED_PIN_27: SeedPin27,
-    pub SEED_PIN_28: SeedPin28,
-    pub SEED_PIN_29: SeedPin29,
-    pub SEED_PIN_30: SeedPin30,
+    pub GPIO: Gpio,
 
     // board peripherals
     pub LED_USER: LedUserPin,

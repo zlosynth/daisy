@@ -8,6 +8,8 @@ backwards compatibility.
 
 * Remove unneeded `cty` dependency.
 * Rename `seed_1_0` feature to `seed`.
+* Move general purpose pins under a sub-structure. e.g. `SEED_PIN_1` to
+  `GPIO.PIN_1`.
 
 ## 0.2.0
 
