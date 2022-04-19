@@ -45,6 +45,8 @@ panic-semihosting = { version = "0.5.6" }
 
 [features]
 log-itm = []
+seed_1_0 = []
+seed_1_1 = []
 
 
 # - profiles ------------------------------------------------------------------

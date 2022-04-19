@@ -1,5 +1,5 @@
 .PHONY: all
-all: format clippy check
+all: format clippy
 
 .PHONY: check-format
 check-format:
@@ -11,11 +11,8 @@ format:
 
 .PHONY: clippy
 clippy:
-	cargo clippy --all --examples -- -D warnings
-
-.PHONY: check
-check:
-	cargo check --all
+	cargo clippy --all --examples --features seed_1_0 -- -D warnings
+	cargo clippy --all --examples --features seed_1_1 -- -D warnings
 
 .PHONY: update
 update:
@@ -23,5 +20,5 @@ update:
 
 .PHONY: flash
 flash:
-	cargo objcopy --release --example $(WHAT) -- -O binary target/program.bin
+	cargo objcopy --release --example $(WHAT) --features $(BOARD) -- -O binary target/program.bin
 	dfu-util -a 0 -s 0x08000000:leave -D target/program.bin -d ,0483:df11

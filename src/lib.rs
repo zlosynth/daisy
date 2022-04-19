@@ -5,6 +5,12 @@
 //!
 //! # Usage - see examples/
 
+#[cfg(all(feature = "seed_1_1", feature = "seed_1_0"))]
+compile_error!("feature \"seed_1_1\" and feature \"seed_1_0\" cannot be enabled at the same time");
+
+#[cfg(not(any(feature = "seed_1_1", feature = "seed_1_0")))]
+compile_error!("target board must be selected using a feature: \"seed_1_1\" | \"seed_1_0\"");
+
 // - modules ------------------------------------------------------------------
 
 pub mod audio;
