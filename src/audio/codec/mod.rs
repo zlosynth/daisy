@@ -1,6 +1,6 @@
-#[cfg(feature = "seed_1_0")]
+#[cfg(feature = "seed")]
 mod ak4556;
-#[cfg(feature = "seed_1_0")]
+#[cfg(feature = "seed")]
 pub use ak4556::{Codec, Pins};
 
 #[cfg(feature = "seed_1_1")]

@@ -46,7 +46,7 @@ panic-semihosting = { version = "0.5.6" }
 
 [features]
 log-itm = []
-seed_1_0 = []
+seed = []
 seed_1_1 = [ "num_enum" ]
 
 

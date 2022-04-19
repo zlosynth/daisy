@@ -38,12 +38,12 @@ impl Interface {
         i2c2_rec: hal::rcc::rec::I2c2,
         dma1_rec: hal::rcc::rec::Dma1,
     ) -> Result<Interface, Error> {
-        #[cfg(feature = "seed_1_0")]
+        #[cfg(feature = "seed")]
         let codec = Codec::init(codec_pins);
         #[cfg(feature = "seed_1_1")]
         let codec = Codec::init(clocks, i2c2_rec, codec_pins);
 
-        #[cfg(feature = "seed_1_0")]
+        #[cfg(feature = "seed")]
         let transfer_config = TransferConfig {
             tx_channel: Channel::A,
             rx_channel: Channel::B,

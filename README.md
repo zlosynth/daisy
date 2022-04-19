@@ -10,7 +10,7 @@ This project was forked from
 
 Currently this library supports following boards:
 
-* Daisy Seed 1.0 (codec AK4556), `seed_1_0`
+* Daisy Seed (codec AK4556), `seed`
 * Daisy Seed 1.1 (codec WM8731), `seed_1_1`
 
 Select the board by using its respective feature.
@@ -24,7 +24,7 @@ To mitigate breakage of your code on library update, use macros defined under
 # Flash an example
 
 ``` sh
-make flash WHAT=blinky BOARD=seed_1_0
+make flash WHAT=blinky BOARD=seed_1_1
 ```
 
 # Razor

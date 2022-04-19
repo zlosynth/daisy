@@ -94,7 +94,7 @@ impl Board {
             SEED_PIN_29: gpiob.pb14,
             SEED_PIN_30: gpiob.pb15,
             LED_USER: gpioc.pc7,
-            #[cfg(feature = "seed_1_0")]
+            #[cfg(feature = "seed")]
             CODEC: CodecPins {
                 PDN: gpiob.pb11, // Codec Reset (AK4556)
             },
@@ -162,7 +162,7 @@ macro_rules! board_split_gpios {
 #[macro_export]
 macro_rules! board_split_audio {
     ($ccdr:expr, $pins:expr) => {{
-        #[cfg(feature = "seed_1_0")]
+        #[cfg(feature = "seed")]
         let codec_pins = ($pins.CODEC.PDN.into_push_pull_output(),);
 
         #[cfg(feature = "seed_1_1")]

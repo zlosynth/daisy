@@ -11,7 +11,7 @@ format:
 
 .PHONY: clippy
 clippy:
-	cargo clippy --all --examples --features seed_1_0 -- -D warnings
+	cargo clippy --all --examples --features seed -- -D warnings
 	cargo clippy --all --examples --features seed_1_1 -- -D warnings
 
 .PHONY: update

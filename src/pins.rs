@@ -36,7 +36,7 @@ pub type SeedPin30 = hal::gpio::gpiob::PB15<hal::gpio::Analog>; // PIN_37, USB1 
 
 pub type LedUserPin = hal::gpio::gpioc::PC7<hal::gpio::Analog>; // LED_USER
 
-#[cfg(feature = "seed_1_0")]
+#[cfg(feature = "seed")]
 #[allow(non_snake_case)]
 pub struct CodecPins {
     pub PDN: hal::gpio::gpiob::PB11<hal::gpio::Analog>, // Codec Reset (AK4556)
