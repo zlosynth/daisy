@@ -37,6 +37,23 @@ impl Interface {
         dma1_rec: hal::rcc::rec::Dma1,
     ) -> Result<Interface, Error> {
         let codec = Codec::init(codec_pins);
+
+        #[cfg(feature = "seed_1_0")]
+        let transfer_config = TransferConfig {
+            tx_channel: Channel::A,
+            rx_channel: Channel::B,
+            tx_sync: Sync::Master,
+            rx_sync: Sync::Slave,
+        };
+
+        #[cfg(feature = "seed_1_1")]
+        let transfer_config = TransferConfig {
+            tx_channel: Channel::B,
+            rx_channel: Channel::A,
+            tx_sync: Sync::Master,
+            rx_sync: Sync::Slave,
+        };
+
         let transfer = Transfer::init(
             clocks,
             sai1_rec,
@@ -44,12 +61,7 @@ impl Interface {
             dma1_rec,
             unsafe { &mut TX_BUFFER },
             unsafe { &mut RX_BUFFER },
-            TransferConfig {
-                tx_channel: Channel::A,
-                rx_channel: Channel::B,
-                tx_sync: Sync::Master,
-                rx_sync: Sync::Slave,
-            },
+            transfer_config,
         );
 
         Ok(Self {
