@@ -4,7 +4,7 @@ use hal::time;
 use stm32h7xx_hal as hal;
 
 use super::codec::{Codec, Pins as CodecPins};
-use super::transfer::{Channel, Config as TransferConfig, Sai1Pins, State, Transfer};
+use super::transfer::{Channel, Config as TransferConfig, Sai1Pins, State, Sync, Transfer};
 use super::{BLOCK_LENGTH, DMA_BUFFER_LENGTH, FS, HALF_DMA_BUFFER_LENGTH};
 
 #[link_section = ".sram1_bss"]
@@ -47,6 +47,8 @@ impl Interface {
             TransferConfig {
                 tx_channel: Channel::A,
                 rx_channel: Channel::B,
+                tx_sync: Sync::Master,
+                rx_sync: Sync::Slave,
             },
         );
 

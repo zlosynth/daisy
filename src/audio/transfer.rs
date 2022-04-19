@@ -25,11 +25,19 @@ pub struct Transfer {
 pub struct Config {
     pub tx_channel: Channel,
     pub rx_channel: Channel,
+    pub tx_sync: Sync,
+    pub rx_sync: Sync,
 }
 
 pub enum Channel {
     A,
     B,
+}
+
+#[derive(Clone, Copy)]
+pub enum Sync {
+    Master,
+    Slave,
 }
 
 impl Transfer {
@@ -54,7 +62,12 @@ impl Transfer {
             Channel::B => Receiver::init_with_channel_b(dma1_streams.1, rx_buffer),
         };
 
-        let audio_interface = AudioInterface::init(clocks, sai1_rec, sai1_pins);
+        let (master, slave) = match (config.tx_sync, config.rx_sync) {
+            (Sync::Master, Sync::Slave) => (sai::I2SDir::Tx, sai::I2SDir::Rx),
+            (Sync::Slave, Sync::Master) => (sai::I2SDir::Rx, sai::I2SDir::Tx),
+            _ => panic!("There must be only one master and one slave"),
+        };
+        let audio_interface = AudioInterface::init(clocks, sai1_rec, sai1_pins, master, slave);
 
         Self {
             transmitter,
@@ -97,11 +110,13 @@ impl AudioInterface {
         clocks: &hal::rcc::CoreClocks,
         sai1_rec: hal::rcc::rec::Sai1,
         sai1_pins: Sai1Pins,
+        master: sai::I2SDir,
+        slave: sai::I2SDir,
     ) -> Self {
-        let sai1_master_config = sai::I2SChanConfig::new(sai::I2SDir::Tx)
+        let sai1_master_config = sai::I2SChanConfig::new(master)
             .set_frame_sync_active_high(true)
             .set_clock_strobe(sai::I2SClockStrobe::Falling);
-        let sai1_slave_config = sai::I2SChanConfig::new(sai::I2SDir::Rx)
+        let sai1_slave_config = sai::I2SChanConfig::new(slave)
             .set_sync_type(sai::I2SSync::Internal)
             .set_frame_sync_active_high(true)
             .set_clock_strobe(sai::I2SClockStrobe::Rising);
