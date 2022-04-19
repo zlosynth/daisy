@@ -4,7 +4,7 @@ version = "0.2.0" # hack/release.sh
 authors = [ "Petr Horáček <hrck@protonmail.com>" ]
 edition = "2018"
 license = "MIT"
-description = "A board support package for the Electro-Smith Daisy Seed"
+description = "A board support package for the Electro-Smith Daisy Seed and Patch SM"
 repository = "https://github.com/zlosynth/daisy"
 categories = [
     "embedded",
@@ -47,6 +47,7 @@ panic-semihosting = { version = "0.5.6" }
 log-itm = []
 seed = []
 seed_1_1 = [ "num_enum" ]
+patch_sm = [ "num_enum" ]
 
 
 # - profiles ------------------------------------------------------------------

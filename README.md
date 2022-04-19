@@ -1,7 +1,7 @@
 # Daisy
 
 Rust `no_std`, `embedded_hal` board support package for the Electro-Smith Daisy
-Seed and Daisy Patch SM.
+platform.
 
 This project was forked from
 [antoinevg/daisy_bsp](https://github.com/antoinevg/daisy_bsp).
@@ -10,8 +10,9 @@ This project was forked from
 
 Currently this library supports following boards:
 
-* Daisy Seed (codec AK4556), `seed`
-* Daisy Seed 1.1 (codec WM8731), `seed_1_1`
+* [Daisy Seed](https://www.electro-smith.com/daisy/daisy) (codec AK4556), `seed`
+* [Daisy Seed 1.1](https://www.electro-smith.com/daisy/daisy) (codec WM8731), `seed_1_1`
+* [Daisy Patch SM](https://www.electro-smith.com/daisy/patch-sm) (codec PCM3060), `patch_sm`
 
 Select the board by using its respective feature.
 
