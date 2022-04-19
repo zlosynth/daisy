@@ -4,7 +4,7 @@ use hal::time;
 use stm32h7xx_hal as hal;
 
 use super::codec::{Codec, Pins as CodecPins};
-use super::transfer::{Sai1Pins, State, Transfer};
+use super::transfer::{Channel, Config as TransferConfig, Sai1Pins, State, Transfer};
 use super::{BLOCK_LENGTH, DMA_BUFFER_LENGTH, FS, HALF_DMA_BUFFER_LENGTH};
 
 #[link_section = ".sram1_bss"]
@@ -31,7 +31,7 @@ pub struct Interface {
 impl Interface {
     pub fn init(
         clocks: &hal::rcc::CoreClocks,
-        sai1_rec: hal::rcc::rec::Sai1, // reset and enable control
+        sai1_rec: hal::rcc::rec::Sai1,
         codec_pins: CodecPins,
         sai1_pins: Sai1Pins,
         dma1_rec: hal::rcc::rec::Dma1,
@@ -44,6 +44,10 @@ impl Interface {
             dma1_rec,
             unsafe { &mut TX_BUFFER },
             unsafe { &mut RX_BUFFER },
+            TransferConfig {
+                tx_channel: Channel::A,
+                rx_channel: Channel::B,
+            },
         );
 
         Ok(Self {
