@@ -16,25 +16,9 @@ pub type Sai1Pins = (
     Option<gpio::gpioe::PE3<gpio::Alternate<6>>>, // SD_B
 );
 
-type TxDma1Str0 = dma::Transfer<
-    dma::dma::Stream0<pac::DMA1>,
-    sai::dma::ChannelA<pac::SAI1>,
-    dma::MemoryToPeripheral,
-    &'static mut [u32; DMA_BUFFER_LENGTH],
-    dma::DBTransfer,
->;
-
-type RxDma1Str1 = dma::Transfer<
-    dma::dma::Stream1<pac::DMA1>,
-    sai::dma::ChannelB<pac::SAI1>,
-    dma::PeripheralToMemory,
-    &'static mut [u32; DMA_BUFFER_LENGTH],
-    dma::DBTransfer,
->;
-
 pub struct Transfer {
-    tx_dma1_str0: TxDma1Str0,
-    rx_dma1_str1: RxDma1Str1,
+    transmitter: Transmitter,
+    receiver: Receiver,
     sai1: hal::sai::Sai<pac::SAI1, hal::sai::I2S>,
 }
 
@@ -50,30 +34,8 @@ impl Transfer {
         let dma1_streams =
             dma::dma::StreamsTuple::new(unsafe { pac::Peripherals::steal().DMA1 }, dma1_rec);
 
-        let dma_config = dma::dma::DmaConfig::default()
-            .priority(dma::config::Priority::High)
-            .memory_increment(true)
-            .peripheral_increment(false)
-            .circular_buffer(true)
-            .fifo_enable(false);
-        let tx_dma1_str0 = dma::Transfer::init(
-            dma1_streams.0,
-            unsafe { pac::Peripherals::steal().SAI1.dma_ch_a() },
-            tx_buffer,
-            None,
-            dma_config,
-        );
-
-        let dma_config = dma_config
-            .transfer_complete_interrupt(true)
-            .half_transfer_interrupt(true);
-        let rx_dma1_str1 = dma::Transfer::init(
-            dma1_streams.1,
-            unsafe { pac::Peripherals::steal().SAI1.dma_ch_b() },
-            rx_buffer,
-            None,
-            dma_config,
-        );
+        let transmitter = Transmitter::init_with_channel_a(dma1_streams.0, tx_buffer);
+        let receiver = Receiver::init_with_channel_b(dma1_streams.1, rx_buffer);
 
         let sai1_master_config = sai::I2SChanConfig::new(sai::I2SDir::Tx)
             .set_frame_sync_active_high(true)
@@ -92,44 +54,27 @@ impl Transfer {
         );
 
         Self {
-            tx_dma1_str0,
-            rx_dma1_str1,
+            transmitter,
+            receiver,
             sai1,
         }
     }
 
     pub fn start(&mut self) {
-        unsafe {
-            pac::NVIC::unmask(pac::Interrupt::DMA1_STR1);
-        }
-
-        let tx_dma1_str0 = &mut self.tx_dma1_str0;
-        let rx_dma1_str1 = &mut self.rx_dma1_str1;
+        let transmitter = &mut self.transmitter;
+        let receiver = &mut self.receiver;
         let sai1 = &mut self.sai1;
 
-        rx_dma1_str1.start(|_sai1_rb| {
-            sai1.enable_dma(SaiChannel::ChannelB);
-        });
-
-        tx_dma1_str0.start(|sai1_rb| {
-            sai1.enable_dma(SaiChannel::ChannelA);
-
-            // wait until sai1's fifo starts to receive data
-            while sai1_rb.cha.sr.read().flvl().is_empty() {}
-
-            sai1.enable();
-
-            use hal::traits::i2s::FullDuplex;
-            sai1.try_send(0, 0).unwrap();
-        });
+        receiver.start(sai1);
+        transmitter.start(sai1);
     }
 
     pub fn examine_interrupt(&mut self) -> Result<State, ()> {
-        if self.rx_dma1_str1.get_half_transfer_flag() {
-            self.rx_dma1_str1.clear_half_transfer_interrupt();
+        if self.receiver.get_half_transfer_flag() {
+            self.receiver.clear_half_transfer_interrupt();
             Ok(State::HalfSent)
-        } else if self.rx_dma1_str1.get_transfer_complete_flag() {
-            self.rx_dma1_str1.clear_transfer_complete_interrupt();
+        } else if self.receiver.get_transfer_complete_flag() {
+            self.receiver.clear_transfer_complete_interrupt();
             Ok(State::FullSent)
         } else {
             Err(())
@@ -140,4 +85,130 @@ impl Transfer {
 pub enum State {
     HalfSent,
     FullSent,
+}
+
+type _Transmitter<C> = dma::Transfer<
+    dma::dma::Stream0<pac::DMA1>,
+    C,
+    dma::MemoryToPeripheral,
+    &'static mut [u32; DMA_BUFFER_LENGTH],
+    dma::DBTransfer,
+>;
+
+enum Transmitter {
+    ChannelA(_Transmitter<sai::dma::ChannelA<pac::SAI1>>),
+    // ChannelB(_Transmitter<sai::dma::ChannelB<pac::SAI1>>),
+}
+
+impl Transmitter {
+    fn init_with_channel_a(
+        dma1_str0: dma::dma::Stream0<pac::DMA1>,
+        tx_buffer: &'static mut [u32; DMA_BUFFER_LENGTH],
+    ) -> Self {
+        let dma_config = dma::dma::DmaConfig::default()
+            .priority(dma::config::Priority::High)
+            .memory_increment(true)
+            .peripheral_increment(false)
+            .circular_buffer(true)
+            .fifo_enable(false);
+        Transmitter::ChannelA(dma::Transfer::init(
+            dma1_str0,
+            unsafe { pac::Peripherals::steal().SAI1.dma_ch_a() },
+            tx_buffer,
+            None,
+            dma_config,
+        ))
+    }
+
+    fn start(&mut self, sai1: &mut hal::sai::Sai<pac::SAI1, hal::sai::I2S>) {
+        match self {
+            Transmitter::ChannelA(dma1_str0) => {
+                dma1_str0.start(|sai1_rb| {
+                    sai1.enable_dma(SaiChannel::ChannelA);
+
+                    // wait until sai1's fifo starts to receive data
+                    while sai1_rb.cha.sr.read().flvl().is_empty() {}
+
+                    sai1.enable();
+
+                    use hal::traits::i2s::FullDuplex;
+                    sai1.try_send(0, 0).unwrap();
+                });
+            }
+        }
+    }
+}
+
+type _Receiver<C> = dma::Transfer<
+    dma::dma::Stream1<pac::DMA1>,
+    C,
+    dma::PeripheralToMemory,
+    &'static mut [u32; DMA_BUFFER_LENGTH],
+    dma::DBTransfer,
+>;
+
+enum Receiver {
+    // ChannelA(_Receiver<sai::dma::ChannelA<pac::SAI1>>),
+    ChannelB(_Receiver<sai::dma::ChannelB<pac::SAI1>>),
+}
+
+impl Receiver {
+    fn init_with_channel_b(
+        dma1_str1: dma::dma::Stream1<pac::DMA1>,
+        rx_buffer: &'static mut [u32; DMA_BUFFER_LENGTH],
+    ) -> Self {
+        let dma_config = dma::dma::DmaConfig::default()
+            .priority(dma::config::Priority::High)
+            .memory_increment(true)
+            .peripheral_increment(false)
+            .circular_buffer(true)
+            .fifo_enable(false)
+            .transfer_complete_interrupt(true)
+            .half_transfer_interrupt(true);
+        Receiver::ChannelB(dma::Transfer::init(
+            dma1_str1,
+            unsafe { pac::Peripherals::steal().SAI1.dma_ch_b() },
+            rx_buffer,
+            None,
+            dma_config,
+        ))
+    }
+
+    fn start(&mut self, sai1: &mut hal::sai::Sai<pac::SAI1, hal::sai::I2S>) {
+        unsafe {
+            pac::NVIC::unmask(pac::Interrupt::DMA1_STR1);
+        }
+
+        match self {
+            Receiver::ChannelB(dma1_str1) => {
+                dma1_str1.start(|_sai1_rb| {
+                    sai1.enable_dma(SaiChannel::ChannelB);
+                });
+            }
+        }
+    }
+
+    fn get_half_transfer_flag(&mut self) -> bool {
+        match self {
+            Self::ChannelB(dma1_str1) => dma1_str1.get_half_transfer_flag(),
+        }
+    }
+
+    fn clear_half_transfer_interrupt(&mut self) {
+        match self {
+            Self::ChannelB(dma1_str1) => dma1_str1.clear_half_transfer_interrupt(),
+        }
+    }
+
+    fn get_transfer_complete_flag(&mut self) -> bool {
+        match self {
+            Self::ChannelB(dma1_str1) => dma1_str1.get_transfer_complete_flag(),
+        }
+    }
+
+    fn clear_transfer_complete_interrupt(&mut self) {
+        match self {
+            Self::ChannelB(dma1_str1) => dma1_str1.clear_transfer_complete_interrupt(),
+        }
+    }
 }
