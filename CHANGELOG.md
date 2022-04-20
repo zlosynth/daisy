@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+## 0.3.0
+
 * Introduce support for Daisy Patch SM, with PCM3060 codec.
 * Move general purpose pins under a sub-structure. e.g. `SEED_PIN_1` to
   `GPIO.PIN_1`.
