@@ -50,14 +50,7 @@ impl Interface {
             tx_sync: Sync::Master,
             rx_sync: Sync::Slave,
         };
-        #[cfg(feature = "seed_1_1")]
-        let transfer_config = TransferConfig {
-            tx_channel: Channel::B,
-            rx_channel: Channel::A,
-            tx_sync: Sync::Slave,
-            rx_sync: Sync::Master,
-        };
-        #[cfg(feature = "patch_sm")]
+        #[cfg(any(feature = "seed_1_1", feature = "patch_sm"))]
         let transfer_config = TransferConfig {
             tx_channel: Channel::B,
             rx_channel: Channel::A,
