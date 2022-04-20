@@ -1,4 +1,4 @@
-use stm32h7xx_hal::gpio;
+use stm32h7xx_hal::gpio::{self, PinMode};
 
 // - traits -------------------------------------------------------------------
 
@@ -21,8 +21,7 @@ pub struct Leds {
 pub struct LedUser(pub gpio::gpioc::PC7<gpio::Output<gpio::PushPull>>);
 
 impl LedUser {
-    // TODO: https://github.com/stm32-rs/stm32h7xx-hal/pull/354
-    pub fn new(pin: gpio::gpioc::PC7<gpio::Analog>) -> Self {
+    pub fn new<MODE: PinMode>(pin: gpio::gpioc::PC7<MODE>) -> Self {
         LedUser(pin.into_push_pull_output())
     }
 }

@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+* Update to stm32h7xx HAL 0.12.1.
+
 ## 0.3.0
 
 * Introduce support for Daisy Patch SM, with PCM3060 codec.
