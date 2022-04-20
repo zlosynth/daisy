@@ -27,5 +27,3 @@ jobs:
         run: make check-format
       - name: Check clippy
         run: make clippy
-      - name: Check compilation
-        run: make check
