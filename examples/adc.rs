@@ -38,8 +38,10 @@ fn main() -> ! {
         adc::Adc::adc1(dp.ADC1, &mut delay, ccdr.peripheral.ADC12, &ccdr.clocks).enable();
     adc1.set_resolution(adc::Resolution::SIXTEENBIT);
 
-    let mut adc1_channel_4 = pins.GPIO.PIN_21.into_analog(); // Daisy Pod: POT_1
-    let mut adc1_channel_0 = pins.GPIO.PIN_15.into_analog(); // Daisy Pod: POT_2
+    #[cfg(any(feature = "seed", feature = "seed_1_1"))]
+    let mut adc1_channel = pins.GPIO.PIN_21.into_analog();
+    #[cfg(feature = "patch_sm")]
+    let mut adc1_channel = pins.GPIO.PIN_C2.into_analog(); // CV_4
 
     // - led ------------------------------------------------------------------
 
@@ -50,10 +52,9 @@ fn main() -> ! {
     let scale_factor = ccdr.clocks.sys_ck().to_Hz() as f32 / 65_535.;
 
     loop {
-        let pot_1: u32 = adc1.read(&mut adc1_channel_4).unwrap();
-        let _pot_2: u32 = adc1.read(&mut adc1_channel_0).unwrap();
+        let pot: u32 = adc1.read(&mut adc1_channel).unwrap();
 
-        let ticks = (pot_1 as f32 * scale_factor) as u32;
+        let ticks = (pot as f32 * scale_factor) as u32;
 
         led_user.set_high();
         asm::delay(ticks);

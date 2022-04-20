@@ -1,4 +1,3 @@
-#![deny(warnings)]
 #![no_std]
 
 //! Board support crate for Daisy hardware

@@ -96,6 +96,39 @@ impl Board {
                 PIN_29: gpiob.pb14,
                 PIN_30: gpiob.pb15,
             },
+            #[cfg(feature = "patch_sm")]
+            GPIO: Gpio {
+                PIN_A2: gpioa.pa1,
+                PIN_A3: gpioa.pa0,
+                PIN_A8: gpiob.pb14,
+                PIN_A9: gpiob.pb15,
+                PIN_B5: gpioc.pc14,
+                PIN_B6: gpioc.pc13,
+                PIN_B7: gpiob.pb8,
+                PIN_B8: gpiob.pb9,
+                PIN_B9: gpiog.pg14,
+                PIN_B10: gpiog.pg13,
+                PIN_C1: gpioa.pa5,
+                PIN_C2: gpioa.pa7,
+                PIN_C3: gpioa.pa2,
+                PIN_C4: gpioa.pa6,
+                PIN_C5: gpioa.pa3,
+                PIN_C6: gpiob.pb1,
+                PIN_C7: gpioc.pc4,
+                PIN_C8: gpioc.pc0,
+                PIN_C9: gpioc.pc1,
+                PIN_C10: gpioa.pa4,
+                PIN_D1: gpiob.pb4,
+                PIN_D2: gpioc.pc11,
+                PIN_D3: gpioc.pc10,
+                PIN_D4: gpioc.pc9,
+                PIN_D5: gpioc.pc8,
+                PIN_D6: gpioc.pc12,
+                PIN_D7: gpiod.pd2,
+                PIN_D8: gpioc.pc2,
+                PIN_D9: gpioc.pc3,
+                PIN_D10: gpiog.pg3,
+            },
             LED_USER: gpioc.pc7,
             #[cfg(feature = "seed")]
             CODEC: CodecPins {
@@ -105,6 +138,11 @@ impl Board {
             CODEC: CodecPins {
                 SCL: gpioh.ph4,  // I2C2 SCL (WM8731)
                 SDA: gpiob.pb11, // I2C2 SDA (WM8731)
+            },
+            #[cfg(feature = "patch_sm")]
+            CODEC: CodecPins {
+                SCL: gpiob.pb10, // I2C2 SCL (PCM3060)
+                SDA: gpiob.pb11, // I2C2 SDA (PCM3060)
             },
             SAI: SaiPins {
                 MCLK_A: gpioe.pe2, // SAI1 MCLK_A
@@ -168,7 +206,7 @@ macro_rules! board_split_audio {
         #[cfg(feature = "seed")]
         let codec_pins = ($pins.CODEC.PDN.into_push_pull_output(),);
 
-        #[cfg(feature = "seed_1_1")]
+        #[cfg(any(feature = "seed_1_1", feature = "patch_sm"))]
         let codec_pins = (
             $pins.CODEC.SCL.into_alternate::<4>().set_open_drain(),
             $pins.CODEC.SDA.into_alternate::<4>().set_open_drain(),

@@ -40,7 +40,7 @@ impl Interface {
     ) -> Result<Interface, Error> {
         #[cfg(feature = "seed")]
         let codec = Codec::init(codec_pins);
-        #[cfg(feature = "seed_1_1")]
+        #[cfg(any(feature = "seed_1_1", feature = "patch_sm"))]
         let codec = Codec::init(clocks, i2c2_rec, codec_pins);
 
         #[cfg(feature = "seed")]
@@ -51,6 +51,13 @@ impl Interface {
             rx_sync: Sync::Slave,
         };
         #[cfg(feature = "seed_1_1")]
+        let transfer_config = TransferConfig {
+            tx_channel: Channel::B,
+            rx_channel: Channel::A,
+            tx_sync: Sync::Slave,
+            rx_sync: Sync::Master,
+        };
+        #[cfg(feature = "patch_sm")]
         let transfer_config = TransferConfig {
             tx_channel: Channel::B,
             rx_channel: Channel::A,
