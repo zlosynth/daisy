@@ -200,13 +200,41 @@ macro_rules! board_split_gpios {
     }};
 }
 
+#[cfg(feature = "seed")]
 #[macro_export]
 macro_rules! board_split_audio {
     ($ccdr:expr, $pins:expr) => {{
-        #[cfg(feature = "seed")]
         let codec_pins = ($pins.CODEC.PDN.into_push_pull_output(),);
 
-        #[cfg(any(feature = "seed_1_1", feature = "patch_sm"))]
+        let sai1_pins = (
+            $pins.SAI.MCLK_A.into_alternate::<6>(),
+            $pins.SAI.SCK_A.into_alternate::<6>(),
+            $pins.SAI.FS_A.into_alternate::<6>(),
+            $pins.SAI.SD_A.into_alternate::<6>(),
+            Some($pins.SAI.SD_B.into_alternate::<6>()),
+        );
+
+        let sai1_prec = $ccdr
+            .peripheral
+            .SAI1
+            .kernel_clk_mux(daisy::hal::rcc::rec::Sai1ClkSel::PLL3_P);
+
+        daisy::audio::Interface::init(
+            &$ccdr.clocks,
+            sai1_prec,
+            sai1_pins,
+            codec_pins,
+            $ccdr.peripheral.I2C2,
+            $ccdr.peripheral.DMA1,
+        )
+        .unwrap()
+    }};
+}
+
+#[cfg(any(feature = "seed_1_1", feature = "patch_sm"))]
+#[macro_export]
+macro_rules! board_split_audio {
+    ($ccdr:expr, $pins:expr) => {{
         let codec_pins = (
             $pins.CODEC.SCL.into_alternate::<4>().set_open_drain(),
             $pins.CODEC.SDA.into_alternate::<4>().set_open_drain(),

@@ -6,6 +6,7 @@ backwards compatibility.
 
 ## Unreleased
 
+* Fix macros so they respect the feature set on the depedency.
 * Introduce a macro to instantiate flash abstraction.
 * Update to stm32h7xx HAL 0.12.1.
 
