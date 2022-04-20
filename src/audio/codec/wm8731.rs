@@ -1,3 +1,5 @@
+// Based on https://github.com/antoinevg/daisy_bsp/issues/8
+
 use cortex_m::asm;
 use cortex_m::prelude::_embedded_hal_blocking_i2c_Write;
 use hal::i2c;
