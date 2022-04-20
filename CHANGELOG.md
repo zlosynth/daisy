@@ -6,6 +6,7 @@ backwards compatibility.
 
 ## Unreleased
 
+* Introduce a macro to instantiate flash abstraction.
 * Update to stm32h7xx HAL 0.12.1.
 
 ## 0.3.0

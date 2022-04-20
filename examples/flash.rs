@@ -16,9 +16,7 @@ fn main() -> ! {
     let ccdr = daisy::board_freeze_clocks!(board, dp);
     let pins = daisy::board_split_gpios!(board, ccdr, dp);
     let mut led_user = daisy::board_split_leds!(pins).USER;
-
-    let mut flash =
-        daisy::flash::Flash::new(&ccdr.clocks, dp.QUADSPI, ccdr.peripheral.QSPI, pins.FMC);
+    let mut flash = daisy::board_split_flash!(ccdr, dp, pins);
 
     // - test that what was written can be read back --------------------------
 

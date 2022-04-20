@@ -245,3 +245,10 @@ macro_rules! board_split_leds {
         }
     }};
 }
+
+#[macro_export]
+macro_rules! board_split_flash {
+    ($ccdr:expr, $dp:expr, $pins:expr) => {{
+        daisy::flash::Flash::new(&$ccdr.clocks, $dp.QUADSPI, $ccdr.peripheral.QSPI, $pins.FMC)
+    }};
+}
