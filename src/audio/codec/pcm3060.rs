@@ -7,8 +7,6 @@ use hal::prelude::*;
 use hal::time;
 use stm32h7xx_hal as hal;
 
-use num_enum::IntoPrimitive;
-
 pub const I2C_FS: time::Hertz = time::Hertz::from_raw(100_000);
 
 pub type Pins = (
@@ -42,23 +40,14 @@ impl Codec {
         let codec_i2c_address: u8 = 0x8c >> 1;
 
         // Go through configuration setup
-        for (register, mask, operation) in REGISTER_CONFIG {
+        for (register, mask) in REGISTER_CONFIG {
             let mut buffer = [0];
-            i2c2.write_read(codec_i2c_address, &[(*register).into()], &mut buffer)
+            i2c2.write_read(codec_i2c_address, &[*register], &mut buffer)
                 .unwrap();
 
-            let mut value = buffer[0];
-            match operation {
-                Operation::On => {
-                    value |= mask;
-                }
-                Operation::Off => {
-                    value &= !mask;
-                }
-            }
+            let value = buffer[0] & !mask;
 
-            i2c2.write(codec_i2c_address, &[(*register).into(), value])
-                .unwrap();
+            i2c2.write(codec_i2c_address, &[*register, value]).unwrap();
 
             // wait ~10us
             asm::delay(5_000);
@@ -67,18 +56,7 @@ impl Codec {
 }
 
 #[allow(non_camel_case_types)]
-#[derive(Debug, Copy, Clone, IntoPrimitive)]
-#[repr(u8)]
-enum Register {
-    SYS_CTRL = 0x40,
-    DAC_CTRL1 = 0x43,
-    ADC_CTRL1 = 0x48,
-}
-
-enum Operation {
-    On,
-    Off,
-}
+const SYS_CTRL_REGISTER: u8 = 0x40;
 
 #[allow(non_camel_case_types)]
 const MRST_MASK: u8 = 0x80;
@@ -88,17 +66,12 @@ const SRST_MASK: u8 = 0x40;
 const ADC_PSV_MASK: u8 = 0x20;
 #[allow(non_camel_case_types)]
 const DAC_PSV_MASK: u8 = 0x10;
-#[allow(non_camel_case_types)]
-const FMT_MASK: u8 = 0x11;
 
-const REGISTER_CONFIG: &[(Register, u8, Operation)] = &[
+const REGISTER_CONFIG: &[(u8, u8)] = &[
     // reset Codec
-    (Register::SYS_CTRL, MRST_MASK, Operation::Off),
-    (Register::SYS_CTRL, SRST_MASK, Operation::Off),
-    // set ADC format to 24-bit LJ
-    (Register::DAC_CTRL1, FMT_MASK & 1, Operation::On),
-    (Register::ADC_CTRL1, FMT_MASK & 1, Operation::On),
+    (SYS_CTRL_REGISTER, MRST_MASK),
+    (SYS_CTRL_REGISTER, SRST_MASK),
     // disable power saving
-    (Register::SYS_CTRL, ADC_PSV_MASK, Operation::Off),
-    (Register::SYS_CTRL, DAC_PSV_MASK, Operation::Off),
+    (SYS_CTRL_REGISTER, ADC_PSV_MASK),
+    (SYS_CTRL_REGISTER, DAC_PSV_MASK),
 ];

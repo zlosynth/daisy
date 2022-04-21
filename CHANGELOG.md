@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+* Fix noise in Patch SM audio interface by switching to I2S.
+
 ## 0.4.0
 
 * Fix macros so they respect the feature set on the depedency.
