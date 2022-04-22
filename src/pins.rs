@@ -59,10 +59,11 @@ pub struct Gpio {
     pub PIN_C3: hal::gpio::gpioa::PA2<hal::gpio::Analog>, // CV_3, Input Only
     pub PIN_C4: hal::gpio::gpioa::PA6<hal::gpio::Analog>, // CV_2, Input Only
     pub PIN_C5: hal::gpio::gpioa::PA3<hal::gpio::Analog>, // CV_1, Input Only
-    pub PIN_C6: hal::gpio::gpiob::PB1<hal::gpio::Analog>, // CV_5, Input Only
-    pub PIN_C7: hal::gpio::gpioc::PC4<hal::gpio::Analog>, // CV_6, Input Only
-    pub PIN_C8: hal::gpio::gpioc::PC0<hal::gpio::Analog>, // CV_7, Input Only
-    pub PIN_C9: hal::gpio::gpioc::PC1<hal::gpio::Analog>, // CV_8, Input Only
+    // FIXME: https://github.com/zlosynth/daisy/issues/1
+    pub PIN_C6: hal::gpio::gpioc::PC1<hal::gpio::Analog>, // CV_8, Input Only
+    pub PIN_C7: hal::gpio::gpioc::PC0<hal::gpio::Analog>, // CV_7, Input Only
+    pub PIN_C8: hal::gpio::gpiob::PB1<hal::gpio::Analog>, // CV_5, Input Only
+    pub PIN_C9: hal::gpio::gpioc::PC4<hal::gpio::Analog>, // CV_6, Input Only
     pub PIN_C10: hal::gpio::gpioa::PA4<hal::gpio::Analog>, // CV_OUT_1, Output Only
     pub PIN_D1: hal::gpio::gpiob::PB4<hal::gpio::Alternate<0>>, // SPI2_CS, GPIO,
     pub PIN_D2: hal::gpio::gpioc::PC11<hal::gpio::Analog>, // SDMMC1_D3, GPIO, USART3_RX*

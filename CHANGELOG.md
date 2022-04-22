@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+* Fix ADC pins C6-C9 mapping.
+
 ## 0.4.1
 
 * Fix noise in Patch SM audio interface by switching to I2S.
