@@ -4,7 +4,6 @@
 use cortex_m_rt::entry;
 use panic_semihosting as _;
 
-use daisy::hal::prelude::*;
 use daisy::led::Led;
 use daisy::loggit;
 
@@ -23,7 +22,7 @@ fn main() -> ! {
 
     // - main loop ------------------------------------------------------------
 
-    let one_second = ccdr.clocks.sys_ck().0;
+    let one_second = ccdr.clocks.sys_ck().to_Hz();
     let mut counter = 0;
 
     loop {

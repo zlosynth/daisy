@@ -7,6 +7,7 @@ backwards compatibility.
 ## Unreleased
 
 * Implicitly use peripheral clock for ADC.
+* Fix ITM module.
 
 ## 0.4.3
 

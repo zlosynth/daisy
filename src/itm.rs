@@ -1,3 +1,5 @@
+#![allow(clippy::identity_op)] // For illustration purposes
+
 /// Adapted from: https://gist.github.com/diondokter/5740aeb145e123c5b4dac7c7b32e36f6
 ///
 /// Register addresses:
@@ -8,6 +10,7 @@
 ///   ITM    base: 0xE000_0000  (Instrumentation Trace Macrocell)
 ///   DCB    base: 0xE000_EDF0  (Debug Control Block)
 
+#[allow(clippy::missing_safety_doc)]
 pub unsafe fn enable_itm(
     dcb: &mut cortex_m::peripheral::DCB,
     dbgmcu: &stm32h7xx_hal::stm32::DBGMCU,
@@ -46,7 +49,7 @@ pub unsafe fn enable_itm(
     *(0x5c00_30f0 as *mut _) = 0x2;
 
     // SWTF_CTRL Trace Funnel: Enable for CM7
-    *(0x5c00_4000 as *mut u32) |= (0 << 1)               | // ENS1 - Slave port S1 enabled (Cortex-M4)
+    *(0x5c00_4000 as *mut u32) |= (0 << 1) | // ENS1 - Slave port S1 enabled (Cortex-M4)
         (1 << 0); // ENS0 - Slave port S0 enabled (Cortex-M7)
 
     // ITM_LAR: Unlock ITM

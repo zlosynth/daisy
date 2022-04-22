@@ -79,7 +79,7 @@ pub fn configure(pwr: pwr::Pwr, rcc: rcc::Rcc, syscfg: &pac::SYSCFG) -> rcc::Ccd
             &mut cp.DCB,
             &dp.DBGMCU,
             &mut cp.ITM,
-            ccdr.clocks.c_ck().0,
+            ccdr.clocks.c_ck().to_Hz(),
             swo_frequency,
         );
     }
