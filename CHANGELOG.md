@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+## 0.4.2
+
 * Fix ADC pins C6-C9 mapping.
 
 ## 0.4.1
