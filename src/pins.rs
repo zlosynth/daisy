@@ -48,8 +48,8 @@ pub struct Gpio {
     pub PIN_A3: hal::gpio::gpioa::PA0<hal::gpio::Analog>, // ADC_10, GPIO, UART4_TX
     pub PIN_A8: hal::gpio::gpiob::PB14<hal::gpio::Analog>, // USB_DM, GPIO, USART1_TX
     pub PIN_A9: hal::gpio::gpiob::PB15<hal::gpio::Analog>, // USB_DP, GPIO, USART1_RX
-    pub PIN_B5: hal::gpio::gpioc::PC14<hal::gpio::Analog>, // GATE_OUT_1 Output Only
-    pub PIN_B6: hal::gpio::gpioc::PC13<hal::gpio::Analog>, // GATE_OUT_2 Output Only
+    pub PIN_B5: hal::gpio::gpioc::PC13<hal::gpio::Analog>, // GATE_OUT_1 Output Only
+    pub PIN_B6: hal::gpio::gpioc::PC14<hal::gpio::Analog>, // GATE_OUT_2 Output Only
     pub PIN_B7: hal::gpio::gpiob::PB8<hal::gpio::Analog>, // I2C1_SCL, GPIO, UART4_RX, PWM (TIM4_CH3)
     pub PIN_B8: hal::gpio::gpiob::PB9<hal::gpio::Analog>, // I2C1_SDA, GPIO, UART4_TX, PWM (TIM4_CH4)
     pub PIN_B9: hal::gpio::gpiog::PG14<hal::gpio::Analog>, // GATE_IN_2, Input Only
@@ -74,7 +74,7 @@ pub struct Gpio {
     pub PIN_D7: hal::gpio::gpiod::PD2<hal::gpio::Analog>, // SDMMC1_CMD, GPIO, UART5_RX*
     pub PIN_D8: hal::gpio::gpioc::PC2<hal::gpio::Analog>, // ADC_12, GPIO, SPI2_MISO
     pub PIN_D9: hal::gpio::gpioc::PC3<hal::gpio::Analog>, // ADC_11, GPIO, SPI2_MOSI
-    pub PIN_D10: hal::gpio::gpiog::PG3<hal::gpio::Analog>, // SPI2_SCK, GPIO
+    pub PIN_D10: hal::gpio::gpiod::PD3<hal::gpio::Analog>, // SPI2_SCK, GPIO
 }
 
 pub type LedUserPin = hal::gpio::gpioc::PC7<hal::gpio::Analog>; // LED_USER
