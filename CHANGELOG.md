@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+## 0.4.3
+
 * Fix mapping of pins B5, B6 and D10.
 
 ## 0.4.2
