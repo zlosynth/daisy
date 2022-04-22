@@ -13,7 +13,6 @@ use daisy::hal;
 use hal::adc;
 use hal::delay::Delay;
 use hal::prelude::*;
-use hal::rcc::rec::AdcClkSel;
 
 #[entry]
 fn main() -> ! {
@@ -22,11 +21,7 @@ fn main() -> ! {
     let board = daisy::Board::take().unwrap();
     let dp = daisy::pac::Peripherals::take().unwrap();
 
-    let mut ccdr = daisy::board_freeze_clocks!(board, dp);
-
-    // switch adc_ker_ck_input multiplexer to per_ck
-    ccdr.peripheral.kernel_adc_clk_mux(AdcClkSel::PER);
-
+    let ccdr = daisy::board_freeze_clocks!(board, dp);
     let pins = daisy::board_split_gpios!(board, ccdr, dp);
 
     // - adc ------------------------------------------------------------------

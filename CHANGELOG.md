@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+* Implicitly use peripheral clock for ADC.
+
 ## 0.4.3
 
 * Fix mapping of pins B5, B6 and D10.
