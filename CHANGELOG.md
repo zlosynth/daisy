@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+## 0.4.5
+
 * Bump cortex-m-rt dependency to 0.7.
 
 ## 0.4.4
