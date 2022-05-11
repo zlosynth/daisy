@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+* Bump cortex-m-rt dependency to 0.7.
+
 ## 0.4.4
 
 * Implicitly use peripheral clock for ADC.
