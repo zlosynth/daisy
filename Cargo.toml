@@ -39,6 +39,8 @@ num_enum = { version = "0.5.6", optional = true, default-features = false }
 panic-itm = { version = "~0.4.1" }
 panic-halt = "0.2.0"
 panic-semihosting = { version = "0.5.6" }
+systick-monotonic = "1"
+cortex-m-rtic = "1"
 
 
 # - features ------------------------------------------------------------------
@@ -66,6 +68,9 @@ opt-level = "s" #  optimize for binary size
 
 [[example]]
 name = "blinky"
+
+[[example]]
+name = "blinky_rtic"
 
 [[example]]
 name = "audio"
