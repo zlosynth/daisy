@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+## 0.5.0
+
 * Add an example of OLED display configuration.
 * Configure clock to support displays connected via SPI.
 
