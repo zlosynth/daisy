@@ -6,6 +6,9 @@ backwards compatibility.
 
 ## Unreleased
 
+* Add an example of OLED display configuration.
+* Configure clock to support displays connected via SPI.
+
 ## 0.4.5
 
 * Bump cortex-m-rt dependency to 0.7.
