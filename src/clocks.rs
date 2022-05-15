@@ -51,6 +51,7 @@ pub fn configure(pwr: pwr::Pwr, rcc: rcc::Rcc, syscfg: &pac::SYSCFG) -> rcc::Ccd
     let mut ccdr = rcc
         .use_seed_crystal() // high speed external crystal @ 16 MHz
         .pll1_strategy(rcc::PllConfigStrategy::Iterative) // pll1 drives system clock
+        .pll1_q_ck(48.MHz()) // required for SPI display
         .sys_ck(480.MHz()) // system clock @ 480 MHz
         .pll3_p_ck(PLL3_P) // audio clock  @ 12.288 MHz
         .per_ck(4.MHz()) // peripheral clock @ 4 MHz
@@ -62,6 +63,7 @@ pub fn configure(pwr: pwr::Pwr, rcc: rcc::Rcc, syscfg: &pac::SYSCFG) -> rcc::Ccd
         .pll1_strategy(rcc::PllConfigStrategy::Iterative) // pll1 drives system clock
         .sys_ck(480.MHz()) // system clock @ 480 MHz
         .pll1_r_ck(480.MHz()) // for TRACECK
+        .pll1_q_ck(48.MHz()) // required for SPI display
         .pll3_p_ck(PLL3_P) // audio clock  @ 12.288 MHz
         .per_ck(4.MHz()) // peripheral clock @ 4 MHz
         .freeze(pwrcfg, syscfg);
