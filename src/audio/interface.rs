@@ -25,7 +25,6 @@ pub struct Interface {
     pub fs: time::Hertz,
     codec: Codec,
     transfer: Transfer,
-    function_ptr: Option<fn(f32, &mut Block)>,
 }
 
 impl Interface {
@@ -72,19 +71,20 @@ impl Interface {
             fs: FS,
             codec,
             transfer,
-            function_ptr: None,
         })
     }
 
     /// assign function pointer for interrupt callback and start audio
-    pub fn spawn(mut self, function_ptr: fn(f32, &mut Block)) -> Result<Self, Error> {
-        self.function_ptr = Some(function_ptr);
+    pub fn spawn(mut self) -> Result<Self, Error> {
         self.codec.start();
         self.transfer.start();
         Ok(self)
     }
 
-    pub fn handle_interrupt_dma1_str1(&mut self) -> Result<(), Error> {
+    pub fn handle_interrupt_dma1_str1(
+        &mut self,
+        mut callback: impl FnMut(&mut [(f32, f32); BLOCK_LENGTH]),
+    ) -> Result<(), Error> {
         let skip = match self.transfer.examine_interrupt() {
             Ok(State::HalfSent) => (0, HALF_DMA_BUFFER_LENGTH),
             Ok(State::FullSent) => (HALF_DMA_BUFFER_LENGTH, 0),
@@ -113,7 +113,7 @@ impl Interface {
         }
 
         // invoke audio callback
-        self.invoke_callback(&mut block);
+        callback(&mut block);
 
         // convert & copy callback buffer to tx buffer
         let mut dma_index: usize = 0;
@@ -131,12 +131,6 @@ impl Interface {
         }
 
         Ok(())
-    }
-
-    fn invoke_callback(&mut self, block: &mut Block) {
-        if let Some(function_ptr) = self.function_ptr.as_mut() {
-            function_ptr(self.fs.to_Hz() as f32, block);
-        }
     }
 }
 

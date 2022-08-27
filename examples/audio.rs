@@ -15,9 +15,6 @@ use daisy::audio;
 use daisy::led::Led;
 use daisy::loggit;
 
-mod dsp;
-use dsp::osc;
-
 // - static global state ------------------------------------------------------
 
 static AUDIO_INTERFACE: Mutex<RefCell<Option<audio::Interface>>> = Mutex::new(RefCell::new(None));
@@ -39,21 +36,7 @@ fn main() -> ! {
     // - audio callback -------------------------------------------------------
 
     // handle callback with function pointer
-    let audio_interface = {
-        fn callback(fs: f32, block: &mut audio::Block) {
-            static mut OSC_1: osc::Wavetable = osc::Wavetable::new(osc::Shape::Sin);
-            static mut OSC_2: osc::Wavetable = osc::Wavetable::new(osc::Shape::Saw);
-            unsafe { OSC_1.dx = (1. / fs) * 110.00 };
-            unsafe { OSC_2.dx = (1. / fs) * 110.00 };
-            for frame in block {
-                *frame = (unsafe { OSC_1.step() }, unsafe { OSC_2.step() });
-            }
-        }
-
-        audio_interface.spawn(callback)
-    };
-
-    let audio_interface = match audio_interface {
+    let audio_interface = match audio_interface.spawn() {
         Ok(audio_interface) => audio_interface,
         Err(e) => {
             loggit!("Failed to start audio interface: {:?}", e);
@@ -85,7 +68,12 @@ fn main() -> ! {
 fn DMA1_STR1() {
     cortex_m::interrupt::free(|cs| {
         if let Some(audio_interface) = AUDIO_INTERFACE.borrow(cs).borrow_mut().as_mut() {
-            match audio_interface.handle_interrupt_dma1_str1() {
+            match audio_interface.handle_interrupt_dma1_str1(|audio_buffer| {
+                for frame in audio_buffer {
+                    let (left, right) = *frame;
+                    *frame = (right, left);
+                }
+            }) {
                 Ok(()) => (),
                 Err(e) => {
                     loggit!("Failed to handle interrupt: {:?}", e);
