@@ -88,3 +88,6 @@ required-features = [ "log-itm" ]
 
 [[example]]
 name = "oled"
+
+[[example]]
+name = "flash"
