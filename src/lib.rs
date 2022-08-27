@@ -35,7 +35,7 @@ pub mod pins;
 #[macro_export]
 macro_rules! loggit {
     ($($arg:tt)*) => (
-        let itm = unsafe { &mut *cortex_m::peripheral::ITM::ptr() };
+        let itm = unsafe { &mut *cortex_m::peripheral::ITM::PTR };
         cortex_m::iprintln!(&mut itm.stim[0], $($arg)*);
     )
 }
