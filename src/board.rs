@@ -151,7 +151,7 @@ impl Board {
                 SD_A: gpioe.pe6,   // SAI1 SD_A
                 SD_B: gpioe.pe3,   // SAI1 SD_B
             },
-            FMC: FMCPins {
+            FLASH: FlashPins {
                 IO0: gpiof.pf8,
                 IO1: gpiof.pf9,
                 IO2: gpiof.pf7,
@@ -277,6 +277,11 @@ macro_rules! board_split_leds {
 #[macro_export]
 macro_rules! board_split_flash {
     ($ccdr:expr, $dp:expr, $pins:expr) => {{
-        daisy::flash::Flash::new(&$ccdr.clocks, $dp.QUADSPI, $ccdr.peripheral.QSPI, $pins.FMC)
+        daisy::flash::Flash::new(
+            &$ccdr.clocks,
+            $dp.QUADSPI,
+            $ccdr.peripheral.QSPI,
+            $pins.FLASH,
+        )
     }};
 }

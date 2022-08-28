@@ -115,7 +115,7 @@ pub struct USB2Pins {
 }
 
 #[allow(non_snake_case)]
-pub struct FMCPins {
+pub struct FlashPins {
     // https://github.com/electro-smith/libDaisy/blob/3dda55e9ed55a2f8b6bc4fa6aa2c7ae134c317ab/src/per/qspi.c#L695
     pub IO0: hal::gpio::gpiof::PF8<hal::gpio::Analog>, // (SI)
     pub IO1: hal::gpio::gpiof::PF9<hal::gpio::Analog>, // (SO)
@@ -135,7 +135,7 @@ pub struct Pins {
     pub LED_USER: LedUserPin,
     pub CODEC: CodecPins,
     pub SAI: SaiPins,
-    pub FMC: FMCPins,
+    pub FLASH: FlashPins,
     pub SDRAM: (), // TODO
     pub USB2: USB2Pins,
 }

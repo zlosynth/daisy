@@ -5,7 +5,7 @@ use crate::hal::gpio::Speed;
 use crate::hal::prelude::*;
 use crate::hal::xspi::{Config, Qspi, QspiMode, QspiWord};
 
-use crate::pins::FMCPins;
+use crate::pins::FlashPins;
 
 // Commands from IS25LP064 datasheet
 const WRITE_STATUS_REGISTRY_CMD: u8 = 0x01; // WRSR
@@ -41,7 +41,7 @@ impl Flash {
     /// let pins = daisy::board_split_gpios!(board, ccdr, dp);
     ///
     /// let mut flash =
-    ///     daisy::flash::Flash::new(&ccdr.clocks, dp.QUADSPI, ccdr.peripheral.QSPI, pins.FMC);
+    ///     daisy::flash::Flash::new(&ccdr.clocks, dp.QUADSPI, ccdr.peripheral.QSPI, pins.FLASH);
     /// ```
     ///
     /// See more under the `examples/` directory.
@@ -49,7 +49,7 @@ impl Flash {
         clocks: &hal::rcc::CoreClocks,
         qspi_device: hal::device::QUADSPI,
         qspi_peripheral: hal::rcc::rec::Qspi,
-        pins: FMCPins,
+        pins: FlashPins,
     ) -> Self {
         // Even though it is not directly used, CS pin must be acquired and configured
         let mut cs = pins.CS.into_alternate::<10>();

@@ -8,6 +8,7 @@ backwards compatibility.
 
 * Breaking: Audio processing callback is now passed to
   `handle_interrupt_dma1_str1` instead of `spawn`.
+* Breaking: Rename `FMCPins` to `FlashPins`.
 
 ## 0.5.0
 
