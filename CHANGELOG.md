@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+## 0.6.0
+
 * Introduce an interface to access SDRAM.
 * Breaking: Audio processing callback is now passed to
   `handle_interrupt_dma1_str1` instead of `spawn`.
