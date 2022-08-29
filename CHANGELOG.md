@@ -6,6 +6,7 @@ backwards compatibility.
 
 ## Unreleased
 
+* Introduce an interface to access SDRAM.
 * Breaking: Audio processing callback is now passed to
   `handle_interrupt_dma1_str1` instead of `spawn`.
 * Breaking: Rename `FMCPins` to `FlashPins`.

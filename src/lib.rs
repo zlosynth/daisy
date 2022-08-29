@@ -28,6 +28,7 @@ pub mod flash;
 pub mod itm;
 pub mod led;
 pub mod pins;
+pub mod sdram;
 
 // - log macros ---------------------------------------------------------------
 

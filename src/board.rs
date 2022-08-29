@@ -345,3 +345,28 @@ macro_rules! board_split_flash {
         )
     }};
 }
+
+#[macro_export]
+macro_rules! board_split_sdram {
+    ($size:expr, $cp:expr, $dp:expr, $ccdr:expr, $pins:expr) => {{
+        use daisy::hal::delay::DelayFromCountDownTimer;
+        use daisy::hal::prelude::*;
+        let mut delay = DelayFromCountDownTimer::new($dp.TIM3.timer(
+            100.Hz(),
+            $ccdr.peripheral.TIM3,
+            &$ccdr.clocks,
+        ));
+        let sdram = daisy::sdram::SDRAM::new(
+            $size,
+            $pins.SDRAM,
+            &$ccdr.clocks,
+            $dp.FMC,
+            $ccdr.peripheral.FMC,
+            &mut $cp.MPU,
+            &mut $cp.SCB,
+            &mut delay,
+        );
+        delay.free().free();
+        sdram
+    }};
+}
