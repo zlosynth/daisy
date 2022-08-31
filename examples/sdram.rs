@@ -7,7 +7,6 @@ use panic_semihosting as _;
 
 use daisy::led::Led;
 use daisy::pac;
-use daisy::sdram::Size;
 
 // - entry point --------------------------------------------------------------
 
@@ -22,7 +21,7 @@ fn main() -> ! {
     let ccdr = daisy::board_freeze_clocks!(board, dp);
     let pins = daisy::board_split_gpios!(board, ccdr, dp);
     let mut led_user = daisy::board_split_leds!(pins).USER;
-    let sdram = daisy::board_split_sdram!(Size::SixtyFour, cp, dp, ccdr, pins);
+    let sdram = daisy::board_split_sdram!(cp, dp, ccdr, pins);
 
     // - RAM handling ---------------------------------------------------------
 

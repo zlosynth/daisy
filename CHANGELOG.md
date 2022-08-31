@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+* Breaking: Remove `size` parameter from SDRAM initialization.
+
 ## 0.6.0
 
 * Introduce an interface to access SDRAM.

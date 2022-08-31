@@ -10,18 +10,7 @@ use hal::fmc::FmcExt;
 use hal::gpio::Speed;
 use hal::hal::blocking::delay::DelayUs;
 
-/// Size is based on the used Daisy model.
-///
-/// By default Daisy Seed and Daisy Patch SM come with 64 MB SDRAM. Daisy Patch
-/// SM can be also ordered with a smaller 1 MB SDRAM.
-// NOTE: Size must be:
-// * 32 bytes or more
-// * Value of a power of 2
-#[derive(Clone, Copy)]
-pub enum Size {
-    SixtyFour = 64 * 1024 * 1024,
-    One = 1024 * 1024,
-}
+const SIZE: usize = 64 * 1024 * 1024;
 
 // Refer to ARMv7-M Architecture Reference Manual ARM DDI 0403
 // Version E.b Section B3.5
@@ -29,13 +18,11 @@ const MEMFAULTENA: u32 = 1 << 16;
 
 pub struct SDRAM {
     pub base_address: *mut u32,
-    size: usize,
 }
 
 impl SDRAM {
     #[allow(clippy::too_many_arguments)]
     pub fn new(
-        size: Size,
         pins: SDRAMPins,
         clocks: &hal::rcc::CoreClocks,
         dp_fmc: hal::device::FMC,
@@ -46,18 +33,15 @@ impl SDRAM {
     ) -> Self {
         disable_mpu(cp_mpu, cp_scb);
         let base_address = initialize_sdram(pins, clocks, dp_fmc, ccdr_fmc, delay);
-        configure_mpu_for_sdram(cp_mpu, base_address, size);
+        configure_mpu_for_sdram(cp_mpu, base_address);
         enable_mpu(cp_mpu, cp_scb);
-        Self {
-            base_address,
-            size: size as usize,
-        }
+        Self { base_address }
     }
 }
 
 impl SDRAM {
     pub fn size(&self) -> usize {
-        self.size
+        SIZE
     }
 }
 
@@ -120,7 +104,7 @@ fn disable_mpu(cp_mpu: &mut hal::pac::MPU, cp_scb: &mut hal::pac::SCB) {
 ///
 /// Cacheable, outer and inner write-back, no write allocate. So reads are
 /// cached, but writes always write all the way to SDRAM.
-fn configure_mpu_for_sdram(cp_mpu: &mut hal::pac::MPU, base_address: *mut u32, size: Size) {
+fn configure_mpu_for_sdram(cp_mpu: &mut hal::pac::MPU, base_address: *mut u32) {
     const REGION_NUMBER0: u32 = 0x00;
     const REGION_FULL_ACCESS: u32 = 0x03;
     const REGION_CACHEABLE: u32 = 0x01;
@@ -133,7 +117,7 @@ fn configure_mpu_for_sdram(cp_mpu: &mut hal::pac::MPU, base_address: *mut u32, s
             (REGION_FULL_ACCESS << 24)
                 | (REGION_CACHEABLE << 17)
                 | (REGION_WRITE_BACK << 16)
-                | (log2minus1(size as u32) << 1)
+                | (log2minus1(SIZE as u32) << 1)
                 | REGION_ENABLE,
         );
     }
