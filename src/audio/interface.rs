@@ -6,6 +6,7 @@ use stm32h7xx_hal as hal;
 use super::codec::{Codec, Pins as CodecPins};
 use super::transfer::{Channel, Config as TransferConfig, Sai1Pins, State, Sync, Transfer};
 use super::{BLOCK_LENGTH, DMA_BUFFER_LENGTH, FS, HALF_DMA_BUFFER_LENGTH};
+use crate::pac::{CorePeripherals, CPUID};
 
 #[link_section = ".sram1_bss"]
 static mut TX_BUFFER: [u32; DMA_BUFFER_LENGTH] = [0; DMA_BUFFER_LENGTH];
@@ -67,6 +68,11 @@ impl Interface {
             transfer_config,
         );
 
+        // Verifying safety requirements and recommendations of
+        // invalidate_dcache_by_slice and clean_dcache_by_slice.
+        validate_slice_against_cache_line(unsafe {&TX_BUFFER});
+        validate_slice_against_cache_line(unsafe {&RX_BUFFER});
+
         Ok(Self {
             fs: FS,
             codec,
@@ -93,6 +99,16 @@ impl Interface {
 
         // callback buffer
         let mut block: Block = [(0., 0.); BLOCK_LENGTH];
+
+        // Force dcache to get populated from memory.
+        // Safety: RX buffer is accessed only through this function, without any
+        // concurrency. The init function verifies that the buffer has the
+        // correct size and alignment.
+        unsafe {
+            CorePeripherals::steal()
+                .SCB
+                .invalidate_dcache_by_slice(&mut RX_BUFFER);
+        }
 
         // convert & copy rx buffer to callback buffer
         let mut dma_index: usize = 0;
@@ -130,8 +146,30 @@ impl Interface {
             block_index += 1;
         }
 
+        // Force dcache to get flushed into memory.
+        // Safety: TX buffer is accessed only through this function, without any
+        // concurrency. The init function verifies that the buffer has the
+        // correct size and alignment.
+        unsafe {
+            CorePeripherals::steal()
+                .SCB
+                .clean_dcache_by_slice(&mut TX_BUFFER);
+        }
+
         Ok(())
     }
+}
+
+/// Verifying safety requirements and recommendations of
+/// invalidate_dcache_by_slice and clean_dcache_by_slice. The slice must be
+/// aligned with cache lines.
+fn validate_slice_against_cache_line<T>(slice: &[T]) {
+    let addr = slice.as_ptr() as usize;
+    let size = slice.len() * core::mem::size_of::<T>();
+    let dminline = CPUID::cache_dminline();
+    let line_size = (1 << dminline) * 4;
+    assert!((addr & (line_size - 1)) == 0);
+    assert!((size & (line_size - 1)) == 0);
 }
 
 /// convert audio data from u24 to f32

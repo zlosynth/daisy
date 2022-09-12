@@ -7,6 +7,7 @@ backwards compatibility.
 ## Unreleased
 
 * Breaking: Remove `size` parameter from SDRAM initialization.
+* Allow utilization of dcache.
 
 ## 0.6.0
 
