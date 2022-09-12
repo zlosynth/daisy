@@ -70,8 +70,8 @@ impl Interface {
 
         // Verifying safety requirements and recommendations of
         // invalidate_dcache_by_slice and clean_dcache_by_slice.
-        validate_slice_against_cache_line(unsafe {&TX_BUFFER});
-        validate_slice_against_cache_line(unsafe {&RX_BUFFER});
+        validate_slice_against_cache_line(unsafe { &TX_BUFFER });
+        validate_slice_against_cache_line(unsafe { &RX_BUFFER });
 
         Ok(Self {
             fs: FS,
@@ -153,7 +153,7 @@ impl Interface {
         unsafe {
             CorePeripherals::steal()
                 .SCB
-                .clean_dcache_by_slice(&mut TX_BUFFER);
+                .clean_dcache_by_slice(&TX_BUFFER);
         }
 
         Ok(())
