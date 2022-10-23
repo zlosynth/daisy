@@ -23,19 +23,37 @@ cat << EOF > ${DESTINATION}/index.html
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://zlosynth.com/daisy">
   <meta property="og:description" content="Root of daisy Rust crate documentations.">
+
+  <style>
+    body {
+      background-color: #f9f7ec;
+      padding-top: 100px;
+    }
+    a {
+      text-decoration: none;
+      color: #2b4d28;
+    }
+    a:hover {
+      text-decoration: underline;
+      text-decoration-thickness: 4px;
+    }
+  </style>
 </head>
 
 <body>
   <center><h1>
-    documentation:
-    <a href="daisy/">Seed</a>,
-    <a href="daisy_1_1/">Seed 1.1</a>,
-    <a href="patch_sm/">Patch SM</a>
+    board:
+    <a href="seed/daisy">Seed</a>,
+    <a href="seed_1_1/daisy">Seed 1.1</a>,
+    <a href="patch_sm/daisy">Patch SM</a>
   </h1></center>
 </body>
 </html>
 EOF
 
-cargo doc --no-deps --features seed --target-dir ${DESTINATION}/seed
-cargo doc --no-deps --features seed_1_1 --target-dir ${DESTINATION}/seed_1_1
-cargo doc --no-deps --features patch_sm --target-dir ${DESTINATION}/patch_sm
+cargo doc --no-deps --features seed
+cp -r target/thumbv7em-none-eabihf/doc ${DESTINATION}/seed
+cargo doc --no-deps --features seed_1_1
+cp -r target/thumbv7em-none-eabihf/doc ${DESTINATION}/seed_1_1
+cargo doc --no-deps --features patch_sm
+cp -r target/thumbv7em-none-eabihf/doc ${DESTINATION}/patch_sm
