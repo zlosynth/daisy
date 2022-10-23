@@ -25,6 +25,13 @@ static AUDIO_INTERFACE: Mutex<RefCell<Option<audio::Interface>>> = Mutex::new(Re
 fn main() -> ! {
     // - board setup ----------------------------------------------------------
 
+    // Using caches should provide a major performance boost.
+    let mut cp = cortex_m::Peripherals::take().unwrap();
+    cp.SCB.enable_icache();
+    // NOTE: Data caching requires cache management around all use of DMA.
+    // This crate already handles that for audio processing.
+    cp.SCB.enable_dcache(&mut cp.CPUID);
+
     let board = daisy::Board::take().unwrap();
     let dp = pac::Peripherals::take().unwrap();
 
