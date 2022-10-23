@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+## 0.7.0
+
 * Breaking: Remove `size` parameter from SDRAM initialization.
 * Allow utilization of dcache.
 * Publish documentation under [https://zlosynth.com/daisy](https://zlosynth.com/daisy).
