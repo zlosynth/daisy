@@ -1,4 +1,4 @@
-name: Action
+name: Continuous integration
 
 on:
   push:
