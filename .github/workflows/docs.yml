@@ -50,10 +50,12 @@ jobs:
           target: thumbv7em-none-eabihf
           toolchain: stable
           override: true
+      - name: Build documentation
+        run: OUTPUT=_docs hack/build-docs.sh
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: '.'
+          path: _docs/
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
