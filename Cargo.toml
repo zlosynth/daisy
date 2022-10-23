@@ -18,6 +18,7 @@ keywords = [
     "daisy",
 ]
 readme = "README.md"
+documentation = "https://zlosynth.com/daisy"
 
 [package.metadata.docs.rs]
 targets = ["thumbv7em-none-eabihf"]

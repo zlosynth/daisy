@@ -3,8 +3,11 @@
 Rust `no_std`, `embedded_hal` board support package for the Electro-Smith Daisy
 platform.
 
-This project was forked from
-[antoinevg/daisy_bsp](https://github.com/antoinevg/daisy_bsp).
+References:
+
+* [Documentation](https://zlosynth.com/daisy)
+* [Crate (crates.io)](https://crates.io/crates/daisy)
+* [Repository (github.com)](https://github.com/zlosynth/daisy)
 
 # Supported boards
 
@@ -38,6 +41,10 @@ make flash WHAT=blinky BOARD=seed_1_1
 
 This library is distributed under the terms of the MIT license. See
 [LICENSE](LICENSE) for details.
+
+This project was forked from
+[antoinevg/daisy_bsp](https://github.com/antoinevg/daisy_bsp).
+Kudos to Antoine for making his library public.
 
 # Changelog
 
