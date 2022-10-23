@@ -3,8 +3,6 @@
 Rust `no_std`, `embedded_hal` board support package for the Electro-Smith Daisy
 platform.
 
-References:
-
 * [Documentation](https://zlosynth.com/daisy)
 * [Crate (crates.io)](https://crates.io/crates/daisy)
 * [Repository (github.com)](https://github.com/zlosynth/daisy)
