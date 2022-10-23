@@ -1,3 +1,6 @@
+//! Configuration of the onboard clock to accomodate for typical usage focused
+//! on high-performance audio processing.
+
 use crate::hal;
 use hal::pac;
 use hal::prelude::*;

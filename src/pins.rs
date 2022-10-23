@@ -1,3 +1,5 @@
+//! Mapping of both internal and external pins.
+
 use stm32h7xx_hal as hal;
 
 // - types --------------------------------------------------------------------

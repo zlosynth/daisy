@@ -1,3 +1,5 @@
+//! Interrupt-driven access to the audio interface.
+
 use hal::time;
 use stm32h7xx_hal as hal;
 

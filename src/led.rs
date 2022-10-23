@@ -1,3 +1,5 @@
+//! Simple abstraction of the on-board status LED.
+
 use stm32h7xx_hal::gpio::{self, PinMode};
 
 // - traits -------------------------------------------------------------------

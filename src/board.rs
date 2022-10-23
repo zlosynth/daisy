@@ -1,3 +1,5 @@
+//! Top-level abstraction of the board used to split out its sub-interfaces.
+
 use stm32h7xx_hal as hal;
 
 use crate::clocks;
@@ -233,6 +235,7 @@ impl Board {
 
 // - macros -------------------------------------------------------------------
 
+/// Configure clocks and retrieve a CCDR handle.
 #[macro_export]
 macro_rules! board_freeze_clocks {
     ($board:expr, $dp:expr) => {{
@@ -242,6 +245,7 @@ macro_rules! board_freeze_clocks {
     }};
 }
 
+/// Retrieve access to all GPIO for external pins and on-board peripherals.
 #[macro_export]
 macro_rules! board_split_gpios {
     ($board:expr, $ccdr:expr, $dp:expr) => {{
@@ -260,6 +264,7 @@ macro_rules! board_split_gpios {
     }};
 }
 
+/// Configure audio codec and return its handle.
 #[cfg(feature = "seed")]
 #[macro_export]
 macro_rules! board_split_audio {
@@ -291,6 +296,7 @@ macro_rules! board_split_audio {
     }};
 }
 
+/// Configure audio codec and return its handle.
 #[cfg(any(feature = "seed_1_1", feature = "patch_sm"))]
 #[macro_export]
 macro_rules! board_split_audio {
@@ -325,6 +331,7 @@ macro_rules! board_split_audio {
     }};
 }
 
+/// Allow access to the on-board LED.
 #[macro_export]
 macro_rules! board_split_leds {
     ($pins:expr) => {{
@@ -334,6 +341,7 @@ macro_rules! board_split_leds {
     }};
 }
 
+/// Configure flash storage and retrieve a handle to it.
 #[macro_export]
 macro_rules! board_split_flash {
     ($ccdr:expr, $dp:expr, $pins:expr) => {{
@@ -346,6 +354,7 @@ macro_rules! board_split_flash {
     }};
 }
 
+/// Configure SDRAM memory and retrieve its handle.
 #[macro_export]
 macro_rules! board_split_sdram {
     ($cp:expr, $dp:expr, $ccdr:expr, $pins:expr) => {{

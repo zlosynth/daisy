@@ -1,4 +1,4 @@
-//! Basic driver for IS25LP064.
+//! Basic driver for IS25LP064 providing access to the on-board flash storage.
 
 use crate::hal;
 use crate::hal::gpio::Speed;

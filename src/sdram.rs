@@ -1,3 +1,5 @@
+//! Configuration of and access to the on-board SDRAM memory.
+//!
 //! Based on the HAL example and libdaisy-rust.
 //! * <https://github.com/stm32-rs/stm32h7xx-hal/blob/99b409d4c1a58795690719bee08e8e5cb8cd3449/examples/fmc.rs>
 //! * <https://github.com/x37v/libdaisy-rust/blob/develop/examples/sdram.rs>
