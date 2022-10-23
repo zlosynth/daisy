@@ -3,7 +3,6 @@
 set -ex
 
 DESTINATION=${DESTINATION:-_docs}
-URL=${URL:-https://zlosynth.com/daisy}
 
 rm -rf ${DESTINATION}
 mkdir -p ${DESTINATION}
