@@ -1,4 +1,4 @@
-// Based on https://github.com/antoinevg/daisy_bsp/issues/8
+// Based on https://github.com/backtail/libdaisy-rust
 
 use cortex_m::asm;
 use cortex_m::prelude::_embedded_hal_blocking_i2c_Write;
