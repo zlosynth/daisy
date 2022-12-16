@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+* Set correct ADC/DAC format on Seed 1.1 and Patch SM to solve conversion issue.
+
 ## 0.7.1
 
 * Fix audio input processing for Seed 1.1 and Patch SM.

@@ -40,12 +40,16 @@ impl Codec {
         let codec_i2c_address: u8 = 0x8c >> 1;
 
         // Go through configuration setup
-        for (register, mask) in REGISTER_CONFIG {
+        for (register, mask, set) in REGISTER_CONFIG {
             let mut buffer = [0];
             i2c2.write_read(codec_i2c_address, &[*register], &mut buffer)
                 .unwrap();
 
-            let value = buffer[0] & !mask;
+            let value = if *set {
+                buffer[0] | mask
+            } else {
+                buffer[0] & !mask
+            };
 
             i2c2.write(codec_i2c_address, &[*register, value]).unwrap();
 
@@ -57,6 +61,10 @@ impl Codec {
 
 #[allow(non_camel_case_types)]
 const SYS_CTRL_REGISTER: u8 = 0x40;
+#[allow(non_camel_case_types)]
+const ADC_CTRL1_REGISTER: u8 = 0x48;
+#[allow(non_camel_case_types)]
+const DAC_CTRL1_REGISTER: u8 = 0x43;
 
 #[allow(non_camel_case_types)]
 const MRST_MASK: u8 = 0x80;
@@ -66,12 +74,17 @@ const SRST_MASK: u8 = 0x40;
 const ADC_PSV_MASK: u8 = 0x20;
 #[allow(non_camel_case_types)]
 const DAC_PSV_MASK: u8 = 0x10;
+#[allow(non_camel_case_types)]
+const FMT_MASK: u8 = 0x1;
 
-const REGISTER_CONFIG: &[(u8, u8)] = &[
+const REGISTER_CONFIG: &[(u8, u8, bool)] = &[
     // reset Codec
-    (SYS_CTRL_REGISTER, MRST_MASK),
-    (SYS_CTRL_REGISTER, SRST_MASK),
+    (SYS_CTRL_REGISTER, MRST_MASK, false),
+    (SYS_CTRL_REGISTER, SRST_MASK, false),
+    // set 24-bit LJ
+    (ADC_CTRL1_REGISTER, FMT_MASK, true),
+    (DAC_CTRL1_REGISTER, FMT_MASK, true),
     // disable power saving
-    (SYS_CTRL_REGISTER, ADC_PSV_MASK),
-    (SYS_CTRL_REGISTER, DAC_PSV_MASK),
+    (SYS_CTRL_REGISTER, ADC_PSV_MASK, false),
+    (SYS_CTRL_REGISTER, DAC_PSV_MASK, false),
 ];

@@ -89,7 +89,7 @@ const REGISTER_CONFIG: &[(Register, u8)] = &[
     // configure power management
     (Register::PWR, 0x42),
     // configure digital format
-    (Register::IFACE, 0x0A),
+    (Register::IFACE, 0x09),
     // set samplerate
     (Register::SRATE, 0x00),
     (Register::ACTIVE, 0x00),

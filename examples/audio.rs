@@ -78,7 +78,7 @@ fn DMA1_STR1() {
             match audio_interface.handle_interrupt_dma1_str1(|audio_buffer| {
                 for frame in audio_buffer {
                     let (left, right) = *frame;
-                    *frame = (right, left);
+                    *frame = (right * 0.8, left * 0.8);
                 }
             }) {
                 Ok(()) => (),
