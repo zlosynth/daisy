@@ -183,13 +183,7 @@ fn u24_to_f32(y: u32) -> f32 {
 #[inline(always)]
 fn f32_to_u24(x: f32) -> u32 {
     //return (int16_t) __SSAT((int32_t) (x * 32767.f), 16);
-    let x = x * 8_388_607.;
-    let x = if x > 8_388_607. {
-        8_388_607.
-    } else if x < -8_388_608. {
-        -8_388_608.
-    } else {
-        x
-    };
+    let x = x * 8_388_607.0;
+    let x = x.clamp(-8_388_608.0, 8_388_607.0);
     (x as i32) as u32
 }
