@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+* Fix audio input processing for Seed 1.1 and Patch SM.
+
 ## 0.7.0
 
 * Breaking: Remove `size` parameter from SDRAM initialization.

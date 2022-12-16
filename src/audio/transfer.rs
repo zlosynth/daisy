@@ -89,14 +89,29 @@ impl Transfer {
     }
 
     pub fn examine_interrupt(&mut self) -> Result<State, ()> {
-        if self.receiver.get_half_transfer_flag() {
-            self.receiver.clear_half_transfer_interrupt();
-            Ok(State::HalfSent)
-        } else if self.receiver.get_transfer_complete_flag() {
-            self.receiver.clear_transfer_complete_interrupt();
-            Ok(State::FullSent)
+        // TODO: Decide this during compilation
+        if let Some(channel_b) = self.transmitter.channel_b() {
+            if channel_b.get_half_transfer_flag() {
+                channel_b.clear_half_transfer_interrupt();
+                Ok(State::HalfSent)
+            } else if channel_b.get_transfer_complete_flag() {
+                channel_b.clear_transfer_complete_interrupt();
+                Ok(State::FullSent)
+            } else {
+                Err(())
+            }
+        } else if let Some(channel_b) = self.receiver.channel_b() {
+            if channel_b.get_half_transfer_flag() {
+                channel_b.clear_half_transfer_interrupt();
+                Ok(State::HalfSent)
+            } else if channel_b.get_transfer_complete_flag() {
+                channel_b.clear_transfer_complete_interrupt();
+                Ok(State::FullSent)
+            } else {
+                Err(())
+            }
         } else {
-            Err(())
+            unreachable!("There is always one channel B");
         }
     }
 }
@@ -116,13 +131,17 @@ impl AudioInterface {
         master: sai::I2SDir,
         slave: sai::I2SDir,
     ) -> Self {
-        let sai1_master_config = sai::I2SChanConfig::new(master)
-            .set_frame_sync_active_high(true)
-            .set_clock_strobe(sai::I2SClockStrobe::Falling);
-        let sai1_slave_config = sai::I2SChanConfig::new(slave)
+        let mut sai1_master_config =
+            sai::I2SChanConfig::new(master).set_frame_sync_active_high(true);
+        let mut sai1_slave_config = sai::I2SChanConfig::new(slave)
             .set_sync_type(sai::I2SSync::Internal)
-            .set_frame_sync_active_high(true)
-            .set_clock_strobe(sai::I2SClockStrobe::Rising);
+            .set_frame_sync_active_high(true);
+
+        if master == sai::I2SDir::Tx {
+            sai1_master_config = sai1_master_config.set_clock_strobe(sai::I2SClockStrobe::Falling);
+            sai1_slave_config = sai1_slave_config.set_clock_strobe(sai::I2SClockStrobe::Rising);
+        }
+
         Self(unsafe { pac::Peripherals::steal().SAI1 }.i2s_ch_a(
             sai1_pins,
             FS,
@@ -157,7 +176,7 @@ impl Transmitter {
             unsafe { pac::Peripherals::steal().SAI1.dma_ch_a() },
             tx_buffer,
             None,
-            Self::dma_config(),
+            channel_a_dma_config(),
         ))
     }
 
@@ -170,17 +189,8 @@ impl Transmitter {
             unsafe { pac::Peripherals::steal().SAI1.dma_ch_b() },
             tx_buffer,
             None,
-            Self::dma_config(),
+            channel_b_dma_config(),
         ))
-    }
-
-    fn dma_config() -> dma::dma::DmaConfig {
-        dma::dma::DmaConfig::default()
-            .priority(dma::config::Priority::High)
-            .memory_increment(true)
-            .peripheral_increment(false)
-            .circular_buffer(true)
-            .fifo_enable(false)
     }
 
     fn start(&mut self, audio_interface: &mut AudioInterface) {
@@ -196,6 +206,9 @@ impl Transmitter {
                 });
             }
             Transmitter::ChannelB(dma1_str1) => {
+                unsafe {
+                    pac::NVIC::unmask(pac::Interrupt::DMA1_STR1);
+                }
                 dma1_str1.start(|sai1_rb| {
                     sai1.enable_dma(SaiChannel::ChannelB);
                     while sai1_rb.chb.sr.read().flvl().is_empty() {} // wait until sai1's fifo starts to receive data
@@ -204,6 +217,17 @@ impl Transmitter {
                     sai1.try_send(0, 0).unwrap();
                 });
             }
+        }
+    }
+
+    fn channel_b(
+        &mut self,
+    ) -> Option<&mut _Transmitter<dma::dma::Stream1<pac::DMA1>, sai::dma::ChannelB<pac::SAI1>>>
+    {
+        if let Self::ChannelB(channel_b) = self {
+            Some(channel_b)
+        } else {
+            None
         }
     }
 }
@@ -231,7 +255,7 @@ impl Receiver {
             unsafe { pac::Peripherals::steal().SAI1.dma_ch_a() },
             rx_buffer,
             None,
-            Self::dma_config(),
+            channel_a_dma_config(),
         ))
     }
 
@@ -244,26 +268,11 @@ impl Receiver {
             unsafe { pac::Peripherals::steal().SAI1.dma_ch_b() },
             rx_buffer,
             None,
-            Self::dma_config(),
+            channel_b_dma_config(),
         ))
     }
 
-    fn dma_config() -> dma::dma::DmaConfig {
-        dma::dma::DmaConfig::default()
-            .priority(dma::config::Priority::High)
-            .memory_increment(true)
-            .peripheral_increment(false)
-            .circular_buffer(true)
-            .fifo_enable(false)
-            .transfer_complete_interrupt(true)
-            .half_transfer_interrupt(true)
-    }
-
     fn start(&mut self, audio_interface: &mut AudioInterface) {
-        unsafe {
-            pac::NVIC::unmask(pac::Interrupt::DMA1_STR1);
-        }
-
         let sai1 = &mut audio_interface.0;
         match self {
             Receiver::ChannelA(dma1_str0) => {
@@ -272,6 +281,9 @@ impl Receiver {
                 });
             }
             Receiver::ChannelB(dma1_str1) => {
+                unsafe {
+                    pac::NVIC::unmask(pac::Interrupt::DMA1_STR1);
+                }
                 dma1_str1.start(|_sai1_rb| {
                     sai1.enable_dma(SaiChannel::ChannelB);
                 });
@@ -279,31 +291,35 @@ impl Receiver {
         }
     }
 
-    fn get_half_transfer_flag(&mut self) -> bool {
-        match self {
-            Self::ChannelA(dma1_str0) => dma1_str0.get_half_transfer_flag(),
-            Self::ChannelB(dma1_str1) => dma1_str1.get_half_transfer_flag(),
+    fn channel_b(
+        &mut self,
+    ) -> Option<&mut _Receiver<dma::dma::Stream1<pac::DMA1>, sai::dma::ChannelB<pac::SAI1>>> {
+        if let Self::ChannelB(channel_b) = self {
+            Some(channel_b)
+        } else {
+            None
         }
     }
+}
 
-    fn clear_half_transfer_interrupt(&mut self) {
-        match self {
-            Self::ChannelA(dma1_str0) => dma1_str0.clear_half_transfer_interrupt(),
-            Self::ChannelB(dma1_str1) => dma1_str1.clear_half_transfer_interrupt(),
-        }
-    }
+fn channel_a_dma_config() -> dma::dma::DmaConfig {
+    dma::dma::DmaConfig::default()
+        .priority(dma::config::Priority::High)
+        .memory_increment(true)
+        .peripheral_increment(false)
+        .circular_buffer(true)
+        .fifo_enable(false)
+}
 
-    fn get_transfer_complete_flag(&mut self) -> bool {
-        match self {
-            Self::ChannelA(dma1_str0) => dma1_str0.get_transfer_complete_flag(),
-            Self::ChannelB(dma1_str1) => dma1_str1.get_transfer_complete_flag(),
-        }
-    }
-
-    fn clear_transfer_complete_interrupt(&mut self) {
-        match self {
-            Self::ChannelA(dma1_str0) => dma1_str0.clear_transfer_complete_interrupt(),
-            Self::ChannelB(dma1_str1) => dma1_str1.clear_transfer_complete_interrupt(),
-        }
-    }
+// Since channel B is always tied to DMA stream 1, it will be the one
+// handling interrupts.
+fn channel_b_dma_config() -> dma::dma::DmaConfig {
+    dma::dma::DmaConfig::default()
+        .priority(dma::config::Priority::High)
+        .memory_increment(true)
+        .peripheral_increment(false)
+        .circular_buffer(true)
+        .fifo_enable(false)
+        .transfer_complete_interrupt(true)
+        .half_transfer_interrupt(true)
 }
