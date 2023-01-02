@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+## 0.7.3
+
 * Fix occasional stuckage of flash initialization.
 
 ## 0.7.2
