@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+* Fix occasional stuckage of flash initialization.
+
 ## 0.7.2
 
 * Set correct ADC/DAC format on Seed 1.1 and Patch SM to solve conversion issue.

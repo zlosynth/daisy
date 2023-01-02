@@ -75,9 +75,9 @@ impl Flash {
 
         let mut flash = Self { driver: qspi };
 
+        flash.enable_qpi_mode();
         flash.reset_status_register();
         flash.reset_read_register();
-        flash.enable_qpi_mode();
 
         flash
     }
