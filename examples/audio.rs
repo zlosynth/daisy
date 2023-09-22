@@ -13,7 +13,6 @@ use pac::interrupt;
 
 use daisy::audio;
 use daisy::led::Led;
-use daisy::loggit;
 
 // - static global state ------------------------------------------------------
 
@@ -46,9 +45,7 @@ fn main() -> ! {
     let audio_interface = match audio_interface.spawn() {
         Ok(audio_interface) => audio_interface,
         Err(e) => {
-            loggit!("Failed to start audio interface: {:?}", e);
-            #[allow(clippy::empty_loop)]
-            loop {}
+            panic!("Failed to start audio interface: {:?}", e);
         }
     };
 
@@ -83,7 +80,7 @@ fn DMA1_STR1() {
             }) {
                 Ok(()) => (),
                 Err(e) => {
-                    loggit!("Failed to handle interrupt: {:?}", e);
+                    panic!("Failed to handle interrupt: {:?}", e);
                 }
             };
         }

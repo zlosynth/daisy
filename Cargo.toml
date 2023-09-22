@@ -38,7 +38,6 @@ num_enum = { version = "0.5.6", optional = true, default-features = false }
 # - dev dependencies ----------------------------------------------------------
 
 [dev-dependencies]
-panic-itm = { version = "~0.4.1" }
 panic-halt = "0.2.0"
 panic-semihosting = { version = "0.5.6" }
 systick-monotonic = "1"
@@ -52,7 +51,6 @@ fugit = "0.3"
 # - features ------------------------------------------------------------------
 
 [features]
-log-itm = []
 seed = []
 seed_1_1 = [ "num_enum" ]
 patch_sm = [ "num_enum" ]
@@ -83,10 +81,6 @@ name = "audio"
 
 [[example]]
 name = "adc"
-
-[[example]]
-name = "itm"
-required-features = [ "log-itm" ]
 
 [[example]]
 name = "oled"

@@ -165,7 +165,7 @@ impl Interface {
 /// aligned with cache lines.
 fn validate_slice_against_cache_line<T>(slice: &[T]) {
     let addr = slice.as_ptr() as usize;
-    let size = slice.len() * core::mem::size_of::<T>();
+    let size = slice.len() * core::mem::size_of_val(slice);
     let dminline = CPUID::cache_dminline();
     let line_size = (1 << dminline) * 4;
     assert!((addr & (line_size - 1)) == 0);
