@@ -6,6 +6,9 @@ backwards compatibility.
 
 ## Unreleased
 
+* **Breaking** Remove logging abstractions from the crate.
+* Improve style and documentation of examples.
+
 ## 0.7.3
 
 * Fix occasional stuckage of flash initialization.
