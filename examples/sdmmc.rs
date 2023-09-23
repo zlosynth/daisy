@@ -88,7 +88,7 @@ fn main() -> ! {
     // Try to connect to the SD card. Blink rapidly to signal waiting.
     while sdmmc.init(bus_frequency).is_err() {
         led_user.toggle();
-        asm::delay(one_second / 4);
+        asm::delay(one_second / 8);
     }
 
     // Write to the card, read back, test that the values match.
