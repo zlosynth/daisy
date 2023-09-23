@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+## 0.8.0
+
 * **Breaking** Remove logging abstractions from the crate.
 * **Breaking** The crate no longer re-exports `embedded_hal`.
 * **Breaking** Remove `Led` trait.
