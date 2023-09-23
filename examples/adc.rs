@@ -7,10 +7,10 @@ use cortex_m::asm;
 use cortex_m_rt::entry;
 use panic_semihosting as _;
 
-use daisy::hal;
 use hal::adc;
 use hal::delay::Delay;
 use hal::prelude::*;
+use stm32h7xx_hal as hal;
 
 #[entry]
 fn main() -> ! {

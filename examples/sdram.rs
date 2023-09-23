@@ -7,8 +7,10 @@ use cortex_m::asm;
 use cortex_m_rt::entry;
 use panic_semihosting as _;
 
+use hal::pac;
+use stm32h7xx_hal as hal;
+
 use daisy::led::Led;
-use daisy::pac;
 
 #[entry]
 fn main() -> ! {

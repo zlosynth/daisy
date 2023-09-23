@@ -6,9 +6,9 @@
 use cortex_m_rt::entry;
 use panic_semihosting as _;
 
-use daisy::hal::prelude::_stm32h7xx_hal_spi_SpiExt;
-use daisy::hal::prelude::_stm32h7xx_hal_timer_TimerExt;
-use daisy::hal::{delay::DelayFromCountDownTimer, spi};
+use hal::prelude::*;
+use hal::{delay::DelayFromCountDownTimer, spi};
+use stm32h7xx_hal as hal;
 
 use embedded_graphics::{
     pixelcolor::BinaryColor,

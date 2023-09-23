@@ -7,11 +7,12 @@ use cortex_m::asm;
 use cortex_m_rt::entry;
 use panic_semihosting as _;
 
-use daisy::led::Led;
 use hal::gpio::Speed;
 use hal::sdmmc::{SdCard, Sdmmc};
 use hal::{pac, prelude::*};
 use stm32h7xx_hal as hal;
+
+use daisy::led::Led;
 
 #[entry]
 fn main() -> ! {

@@ -11,10 +11,11 @@ use cortex_m::interrupt::Mutex;
 use cortex_m_rt::entry;
 use panic_semihosting as _;
 
+use hal::pac::{self, interrupt};
+use stm32h7xx_hal as hal;
+
 use daisy::audio;
 use daisy::led::Led;
-use daisy::pac;
-use pac::interrupt;
 
 // Keep audio interface in a global, so it can be shared between functions.
 static AUDIO_INTERFACE: Mutex<RefCell<Option<audio::Interface>>> = Mutex::new(RefCell::new(None));
