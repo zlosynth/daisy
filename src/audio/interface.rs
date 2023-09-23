@@ -4,7 +4,7 @@ use super::codec::{Codec, Pins as CodecPins};
 use super::transfer::{Channel, Config as TransferConfig, Sai1Pins, State, Sync, Transfer};
 use super::{BLOCK_LENGTH, DMA_BUFFER_LENGTH, FS, HALF_DMA_BUFFER_LENGTH};
 use crate::hal;
-use crate::pac::{CorePeripherals, CPUID};
+use hal::pac::{CorePeripherals, CPUID};
 use hal::time;
 
 #[link_section = ".sram1_bss"]

@@ -64,6 +64,6 @@ pub mod pins;
 pub mod sdram;
 
 pub use board::Board;
-pub use hal::hal as embedded_hal;
 pub use hal::pac;
+// Re-exported so it can be used from daisy macros.
 pub use stm32h7xx_hal as hal;
