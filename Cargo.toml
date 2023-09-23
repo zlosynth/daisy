@@ -38,6 +38,8 @@ embedded-graphics = "0.8"
 display-interface-spi = "0.4"
 ssd1306 = "0.8.0"
 fugit = "0.3"
+# HAL in examples requires an additional SDMMC feature.
+stm32h7xx-hal = { version = "0.14", features = [ "stm32h750v", "rt", "revision_v", "usb_hs", "xspi", "fmc", "sdmmc" ] }
 
 [features]
 seed = []
@@ -67,3 +69,6 @@ name = "flash"
 
 [[example]]
 name = "sdram"
+
+[[example]]
+name = "sdmmc"

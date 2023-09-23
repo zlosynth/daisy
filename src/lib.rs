@@ -35,6 +35,7 @@
 //! * [Flash storage](https://github.com/zlosynth/daisy/blob/main/examples/flash.rs)
 //! * [OLED display](https://github.com/zlosynth/daisy/blob/main/examples/oled.rs)
 //! * [SDRAM memory](https://github.com/zlosynth/daisy/blob/main/examples/sdram.rs)
+//! * [SD card](https://github.com/zlosynth/daisy/blob/main/examples/sdmmc.rs)
 //!
 //! ``` sh
 //! make flash WHAT=blinky BOARD=seed_1_1
