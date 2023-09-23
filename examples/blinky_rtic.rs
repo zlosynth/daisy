@@ -7,7 +7,7 @@
 
 use panic_semihosting as _;
 
-#[rtic::app(device = stm32h7xx_hal::pac, peripherals = true, dispatchers = [EXTI0])]
+#[rtic::app(device = daisy::pac, peripherals = true, dispatchers = [EXTI0])]
 mod app {
     use systick_monotonic::*;
 
