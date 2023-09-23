@@ -1,12 +1,9 @@
 //! Top-level abstraction of the board used to split out its sub-interfaces.
 
-use stm32h7xx_hal as hal;
-
 use crate::clocks;
+use crate::hal;
 use crate::led;
 use crate::pins::*;
-
-// - global static state ------------------------------------------------------
 
 // `no_mangle` is used here to prevent linking different minor
 // versions of this crate as that would let you `take` the core
@@ -16,8 +13,6 @@ static DAISY_BOARD: () = ();
 
 /// Set to `true` when `take` was called to make `Board` a singleton.
 static mut TAKEN: bool = false;
-
-// - Board --------------------------------------------------------------------
 
 pub struct Board;
 
@@ -232,8 +227,6 @@ impl Board {
         led::LedUser::new(pin)
     }
 }
-
-// - macros -------------------------------------------------------------------
 
 /// Configure clocks and retrieve a CCDR handle.
 #[macro_export]

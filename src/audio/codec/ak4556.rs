@@ -1,6 +1,7 @@
 use cortex_m::asm;
+
+use crate::hal;
 use hal::gpio;
-use stm32h7xx_hal as hal;
 
 type ResetPin = gpio::gpiob::PB11<gpio::Output<gpio::PushPull>>; // PDN
 

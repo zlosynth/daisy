@@ -1,15 +1,17 @@
-// Based on https://github.com/backtail/libdaisy-rust
+// Based on https://github.com/backtail/libdaisy-rust.
 
 use cortex_m::asm;
 use cortex_m::prelude::_embedded_hal_blocking_i2c_Write;
-use hal::i2c;
-use hal::pac;
-use hal::time;
-use stm32h7xx_hal as hal; // to make the i2c2.write() work
 
 use num_enum::IntoPrimitive;
 
-pub const I2C_FS: time::Hertz = time::Hertz::from_raw(100_000);
+use crate::hal;
+use hal::i2c;
+use hal::pac;
+use hal::time;
+
+const I2C_FS: time::Hertz = time::Hertz::from_raw(100_000);
+const I2C_CODEC_ADDRESS: u8 = 0x1a;
 
 pub type Pins = (
     hal::gpio::gpioh::PH4<hal::gpio::Alternate<4, hal::gpio::OpenDrain>>, // I2C2 SCL (WM8731)
@@ -39,9 +41,7 @@ impl Codec {
     pub fn start(&mut self) {
         let i2c2 = &mut self.i2c2;
 
-        let codec_i2c_address: u8 = 0x1a; // or 0x1b if CSB is high
-
-        // Go through configuration setup
+        // Go through configuration setup.
         for (register, value) in REGISTER_CONFIG {
             let register: u8 = (*register).into();
             let value: u8 = *value;
@@ -49,9 +49,9 @@ impl Codec {
             let byte2: u8 = value;
             let bytes = [byte1, byte2];
 
-            i2c2.write(codec_i2c_address, &bytes).unwrap_or_default();
+            i2c2.write(I2C_CODEC_ADDRESS, &bytes).unwrap_or_default();
 
-            // wait ~10us
+            // Wait ~10us.
             asm::delay(5_000);
         }
     }
@@ -75,22 +75,22 @@ enum Register {
 }
 
 const REGISTER_CONFIG: &[(Register, u8)] = &[
-    // reset Codec
+    // Reset Codec.
     (Register::RESET, 0x00),
-    // set line inputs 0dB
+    // Set line inputs 0dB.
     (Register::LINVOL, 0x17),
     (Register::RINVOL, 0x17),
-    // set headphone to mute
+    // Set headphone to mute.
     (Register::LOUT1V, 0x00),
     (Register::ROUT1V, 0x00),
-    // set analog and digital routing
+    // Set analog and digital routing.
     (Register::APANA, 0x12),
     (Register::APDIGI, 0x01),
-    // configure power management
+    // Configure power management.
     (Register::PWR, 0x42),
-    // configure digital format
+    // Configure digital format.
     (Register::IFACE, 0x09),
-    // set samplerate
+    // Set samplerate.
     (Register::SRATE, 0x00),
     (Register::ACTIVE, 0x00),
     (Register::ACTIVE, 0x01),

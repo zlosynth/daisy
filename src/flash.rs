@@ -7,7 +7,7 @@ use crate::hal::xspi::{Config, Qspi, QspiMode, QspiWord};
 
 use crate::pins::FlashPins;
 
-// Commands from IS25LP064 datasheet
+// Commands from IS25LP064 datasheet.
 const WRITE_STATUS_REGISTRY_CMD: u8 = 0x01; // WRSR
 const WRITE_CMD: u8 = 0x02; // PP
 const READ_STATUS_REGISTRY_CMD: u8 = 0x05; // RDSR
@@ -17,7 +17,7 @@ const SET_READ_PARAMETERS_CMD: u8 = 0xC0; // SRP
 const SECTOR_ERASE_CMD: u8 = 0xD7; // SER
 const FAST_READ_QUAD_IO_CMD: u8 = 0xEB; // FRQIO
 
-// Memory array specifications as defined in the datasheet
+// Memory array specifications as defined in the datasheet.
 const SECTOR_SIZE: u32 = 4096;
 const PAGE_SIZE: u32 = 256;
 const MAX_ADDRESS: u32 = 0x7FFFFF;
@@ -51,7 +51,7 @@ impl Flash {
         qspi_peripheral: hal::rcc::rec::Qspi,
         pins: FlashPins,
     ) -> Self {
-        // Even though it is not directly used, CS pin must be acquired and configured
+        // Even though it is not directly used, CS pin must be acquired and configured.
         let mut cs = pins.CS.into_alternate::<10>();
         let mut sck = pins.SCK.into_alternate::<9>();
         let mut io0 = pins.IO0.into_alternate::<10>();
@@ -133,10 +133,10 @@ impl Flash {
         let mut start_cursor = 0;
 
         loop {
-            // Calculate number of bytes between address and end of the page
+            // Calculate number of bytes between address and end of the page.
             let page_remainder = PAGE_SIZE - (address & (PAGE_SIZE - 1));
 
-            // Write data to the page in chunks of 32 (limitation of `write_extended`)
+            // Write data to the page in chunks of 32 (limitation of `write_extended`).
             let size = page_remainder.min(length) as usize;
             for (i, chunk) in data[start_cursor..start_cursor + size]
                 .chunks(32)
@@ -155,13 +155,13 @@ impl Flash {
             }
             start_cursor += size;
 
-            // Stop if this was the last needed page
+            // Stop if this was the last needed page.
             if length <= page_remainder {
                 break;
             }
             length -= page_remainder;
 
-            // Jump to the next page
+            // Jump to the next page.
             address += page_remainder;
             address %= MAX_ADDRESS;
         }
@@ -188,7 +188,7 @@ impl Flash {
         assert!(length > 0);
 
         loop {
-            // Erase the sector
+            // Erase the sector.
             self.enable_write();
             self.driver
                 .write_extended(
@@ -200,16 +200,16 @@ impl Flash {
                 .unwrap();
             self.wait_for_write();
 
-            // Calculate number of bytes between address and end of the sector
+            // Calculate number of bytes between address and end of the sector.
             let sector_remainder = SECTOR_SIZE - (address & (SECTOR_SIZE - 1));
 
-            // Stop if this was the last affected sector
+            // Stop if this was the last affected sector.
             if length <= sector_remainder {
                 break;
             }
             length -= sector_remainder;
 
-            // Jump to the next sector
+            // Jump to the next sector.
             address += sector_remainder;
             address %= MAX_ADDRESS;
         }

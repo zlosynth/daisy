@@ -1,12 +1,11 @@
 use core::num::Wrapping;
 
-use hal::time;
-use stm32h7xx_hal as hal;
-
 use super::codec::{Codec, Pins as CodecPins};
 use super::transfer::{Channel, Config as TransferConfig, Sai1Pins, State, Sync, Transfer};
 use super::{BLOCK_LENGTH, DMA_BUFFER_LENGTH, FS, HALF_DMA_BUFFER_LENGTH};
+use crate::hal;
 use crate::pac::{CorePeripherals, CPUID};
+use hal::time;
 
 #[link_section = ".sram1_bss"]
 static mut TX_BUFFER: [u32; DMA_BUFFER_LENGTH] = [0; DMA_BUFFER_LENGTH];
@@ -80,7 +79,7 @@ impl Interface {
         })
     }
 
-    /// assign function pointer for interrupt callback and start audio
+    /// Start audio streaming.
     pub fn spawn(mut self) -> Result<Self, Error> {
         self.codec.start();
         self.transfer.start();
@@ -97,8 +96,7 @@ impl Interface {
             _ => return Err(Error::Dma),
         };
 
-        // callback buffer
-        let mut block: Block = [(0., 0.); BLOCK_LENGTH];
+        let mut block: Block = [(0.0, 0.0); BLOCK_LENGTH];
 
         // Force dcache to get populated from memory.
         // Safety: RX buffer is accessed only through this function, without any
@@ -110,7 +108,7 @@ impl Interface {
                 .invalidate_dcache_by_slice(&mut RX_BUFFER);
         }
 
-        // convert & copy rx buffer to callback buffer
+        // Convert and copy received audio to callback buffer.
         let mut dma_index: usize = 0;
         let mut block_index: usize = 0;
         while dma_index < HALF_DMA_BUFFER_LENGTH {
@@ -128,10 +126,10 @@ impl Interface {
             block_index += 1;
         }
 
-        // invoke audio callback
+        // Invoke user-supplied callback.
         callback(&mut block);
 
-        // convert & copy callback buffer to tx buffer
+        // Convert and copy callback buffer to output audio buffer.
         let mut dma_index: usize = 0;
         let mut block_index: usize = 0;
         while dma_index < HALF_DMA_BUFFER_LENGTH {
@@ -172,17 +170,16 @@ fn validate_slice_against_cache_line<T>(slice: &[T]) {
     assert!((size & (line_size - 1)) == 0);
 }
 
-/// convert audio data from u24 to f32
+/// Convert audio data from u24 to f32.
 #[inline(always)]
 fn u24_to_f32(y: u32) -> f32 {
     let y = (Wrapping(y) + Wrapping(0x0080_0000)).0 & 0x00FF_FFFF; // convert to i32
-    (y as f32 / 8_388_608.) - 1. // (2^24) / 2
+    (y as f32 / 8_388_608.0) - 1.0 // (2^24) / 2
 }
 
-/// convert audio data from f32 to u24
+/// Convert audio data from f32 to u24.
 #[inline(always)]
 fn f32_to_u24(x: f32) -> u32 {
-    //return (int16_t) __SSAT((int32_t) (x * 32767.f), 16);
     let x = x * 8_388_607.0;
     let x = x.clamp(-8_388_608.0, 8_388_607.0);
     (x as i32) as u32

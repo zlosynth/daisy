@@ -53,8 +53,6 @@ compile_error!(
     "target board must be selected using a feature: \"seed_1_1\" | \"seed\" | \"patch_sm\""
 );
 
-// - modules ------------------------------------------------------------------
-
 pub mod audio;
 pub mod board;
 pub mod clocks;
@@ -63,10 +61,7 @@ pub mod led;
 pub mod pins;
 pub mod sdram;
 
-// - exports ------------------------------------------------------------------
-
+pub use board::Board;
 pub use hal::hal as embedded_hal;
 pub use hal::pac;
 pub use stm32h7xx_hal as hal;
-
-pub use board::Board;

@@ -1,8 +1,8 @@
+use crate::hal;
 use hal::dma;
 use hal::gpio;
 use hal::prelude::*;
 use hal::sai::{self, I2sUsers, SaiChannel, SaiI2sExt};
-use stm32h7xx_hal as hal;
 
 use hal::pac;
 

@@ -12,12 +12,8 @@ use hal::time::MegaHertz;
 
 use crate::audio;
 
-// - constants ----------------------------------------------------------------
-
 // SAI clock uses pll3
 const PLL3_P: Hertz = Hertz::from_raw(audio::FS.to_Hz() * 256);
-
-// - types --------------------------------------------------------------------
 
 pub trait SeedCrystal {
     const CRYSTAL_FREQ: MegaHertz = MegaHertz::from_raw(16);
@@ -31,10 +27,8 @@ impl SeedCrystal for rcc::Rcc {
     }
 }
 
-// - configure ----------------------------------------------------------------
-
 /// Configures the 16 MHz crystal, a 480 MHz system clock and PLL3 for
-/// SAI audio
+/// SAI audio.
 ///
 /// The Daisy Seed has a 16 MHz crystal wired to the MCU's high-speed
 /// external oscillator pins. We enable that, and use it to drive the

@@ -89,19 +89,6 @@ fn initialize_sdram(
         .init(delay)
 }
 
-/// Disable and reset MPU.
-fn disable_mpu(cp_mpu: &mut hal::pac::MPU, cp_scb: &mut hal::pac::SCB) {
-    unsafe {
-        // Make sure outstanding transfers are done
-        cortex_m::asm::dmb();
-
-        cp_scb.shcsr.modify(|r| r & !MEMFAULTENA);
-
-        // Disable the MPU and clear the control register
-        cp_mpu.ctrl.write(0);
-    }
-}
-
 /// Configure region 0.
 ///
 /// Cacheable, outer and inner write-back, no write allocate. So reads are
@@ -145,8 +132,21 @@ fn enable_mpu(cp_mpu: &mut hal::pac::MPU, cp_scb: &mut hal::pac::SCB) {
 
         cp_scb.shcsr.modify(|r| r | MEMFAULTENA);
 
-        // Ensure MPU settings take effect
+        // Ensure MPU settings take effect.
         cortex_m::asm::dsb();
         cortex_m::asm::isb();
+    }
+}
+
+/// Disable and reset MPU.
+fn disable_mpu(cp_mpu: &mut hal::pac::MPU, cp_scb: &mut hal::pac::SCB) {
+    unsafe {
+        // Make sure outstanding transfers are done.
+        cortex_m::asm::dmb();
+
+        cp_scb.shcsr.modify(|r| r & !MEMFAULTENA);
+
+        // Disable the MPU and clear the control register.
+        cp_mpu.ctrl.write(0);
     }
 }

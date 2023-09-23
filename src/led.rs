@@ -1,19 +1,15 @@
 //! Simple abstraction of the on-board status LED.
 
-use stm32h7xx_hal::gpio::{self, PinMode};
-
-// - traits -------------------------------------------------------------------
+use crate::hal::gpio::{self, PinMode};
 
 /// Generic LED
 pub trait Led {
-    /// Turns the LED off
+    /// Turns the LED off.
     fn off(&mut self);
 
-    /// Turns the LED on
+    /// Turns the LED on.
     fn on(&mut self);
 }
-
-// - types --------------------------------------------------------------------
 
 #[allow(non_snake_case)]
 pub struct Leds {
