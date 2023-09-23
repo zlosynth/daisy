@@ -23,15 +23,12 @@ documentation = "https://zlosynth.com/daisy"
 [package.metadata.docs.rs]
 targets = ["thumbv7em-none-eabihf"]
 
-
 [dependencies]
 cortex-m = "0.7"
 cortex-m-rt = { version = "0.7", features = [ "device" ] }
 stm32h7xx-hal = { version = "0.14", features = [ "stm32h750v", "rt", "revision_v", "usb_hs", "xspi", "fmc" ] }
 stm32-fmc = "0.3"
-cortex-m-semihosting = "0.3.5"
 num_enum = { version = "0.5.6", optional = true, default-features = false }
-
 
 [dev-dependencies]
 panic-halt = "0.2.0"
@@ -42,7 +39,6 @@ embedded-graphics = "0.7"
 display-interface-spi = "0.4"
 ssd1306 = "0.7.0"
 fugit = "0.3"
-
 
 [features]
 seed = []
