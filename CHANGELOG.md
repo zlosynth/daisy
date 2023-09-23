@@ -7,7 +7,7 @@ backwards compatibility.
 ## Unreleased
 
 * **Breaking** Remove logging abstractions from the crate.
-* **Breaking** Bump STM32H7 HAL to version 0.14.
+* Bump STM32H7 HAL to version 0.14.
 * Improve style and documentation of examples.
 * Introduce RTIC example of audio processing.
 * Introduce example of SD card interaction.
