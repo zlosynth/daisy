@@ -275,7 +275,7 @@ macro_rules! board_split_audio {
         let sai1_prec = $ccdr
             .peripheral
             .SAI1
-            .kernel_clk_mux(daisy::hal::rcc::rec::Sai1ClkSel::PLL3_P);
+            .kernel_clk_mux(daisy::hal::rcc::rec::Sai1ClkSel::Pll3P);
 
         daisy::audio::Interface::init(
             &$ccdr.clocks,
@@ -310,7 +310,7 @@ macro_rules! board_split_audio {
         let sai1_prec = $ccdr
             .peripheral
             .SAI1
-            .kernel_clk_mux(daisy::hal::rcc::rec::Sai1ClkSel::PLL3_P);
+            .kernel_clk_mux(daisy::hal::rcc::rec::Sai1ClkSel::Pll3P);
 
         daisy::audio::Interface::init(
             &$ccdr.clocks,

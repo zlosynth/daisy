@@ -50,11 +50,10 @@ pub fn configure(pwr: pwr::Pwr, rcc: rcc::Rcc, syscfg: &pac::SYSCFG) -> rcc::Ccd
         .pll1_q_ck(48.MHz()) // required for SPI display
         .sys_ck(480.MHz()) // system clock @ 480 MHz
         .pll3_p_ck(PLL3_P) // audio clock  @ 12.288 MHz
-        .per_ck(4.MHz()) // peripheral clock @ 4 MHz
         .freeze(pwrcfg, syscfg);
 
     // switch adc_ker_ck_input multiplexer to per_ck
-    ccdr.peripheral.kernel_adc_clk_mux(AdcClkSel::PER);
+    ccdr.peripheral.kernel_adc_clk_mux(AdcClkSel::Per);
 
     ccdr
 }

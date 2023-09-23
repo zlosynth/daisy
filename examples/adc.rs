@@ -25,9 +25,15 @@ fn main() -> ! {
 
     // Configure ADC.
     let mut delay = Delay::new(cp.SYST, ccdr.clocks);
-    let mut adc1 =
-        adc::Adc::adc1(dp.ADC1, &mut delay, ccdr.peripheral.ADC12, &ccdr.clocks).enable();
-    adc1.set_resolution(adc::Resolution::SIXTEENBIT);
+    let mut adc1 = adc::Adc::adc1(
+        dp.ADC1,
+        4.MHz(),
+        &mut delay,
+        ccdr.peripheral.ADC12,
+        &ccdr.clocks,
+    )
+    .enable();
+    adc1.set_resolution(adc::Resolution::SixteenBit);
 
     // Select a pin that will be used for ADC, depending on the board.
     #[cfg(any(feature = "seed", feature = "seed_1_1"))]

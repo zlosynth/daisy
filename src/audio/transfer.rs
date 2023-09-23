@@ -199,7 +199,7 @@ impl Transmitter {
             Transmitter::ChannelA(dma1_str0) => {
                 dma1_str0.start(|sai1_rb| {
                     sai1.enable_dma(SaiChannel::ChannelA);
-                    while sai1_rb.cha.sr.read().flvl().is_empty() {} // wait until sai1's fifo starts to receive data
+                    while sai1_rb.cha().sr.read().flvl().is_empty() {} // wait until sai1's fifo starts to receive data
                     sai1.enable();
                     use hal::traits::i2s::FullDuplex;
                     sai1.try_send(0, 0).unwrap();
@@ -211,7 +211,7 @@ impl Transmitter {
                 }
                 dma1_str1.start(|sai1_rb| {
                     sai1.enable_dma(SaiChannel::ChannelB);
-                    while sai1_rb.chb.sr.read().flvl().is_empty() {} // wait until sai1's fifo starts to receive data
+                    while sai1_rb.chb().sr.read().flvl().is_empty() {} // wait until sai1's fifo starts to receive data
                     sai1.enable();
                     use hal::traits::i2s::FullDuplex;
                     sai1.try_send(0, 0).unwrap();
