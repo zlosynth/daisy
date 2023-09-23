@@ -54,6 +54,9 @@ name = "blinky_rtic"
 name = "audio"
 
 [[example]]
+name = "audio_rtic"
+
+[[example]]
 name = "adc"
 
 [[example]]
