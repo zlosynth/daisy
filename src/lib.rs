@@ -29,6 +29,7 @@
 //!
 //! * [ADC](https://github.com/zlosynth/daisy/blob/main/examples/adc.rs)
 //! * [Audio](https://github.com/zlosynth/daisy/blob/main/examples/audio.rs)
+//! * [Audio with RTIC](https://github.com/zlosynth/daisy/blob/main/examples/audio_rtic.rs)
 //! * [Blinky](https://github.com/zlosynth/daisy/blob/main/examples/blinky.rs)
 //! * [Blinky with RTIC](https://github.com/zlosynth/daisy/blob/main/examples/blinky_rtic.rs)
 //! * [Flash storage](https://github.com/zlosynth/daisy/blob/main/examples/flash.rs)
