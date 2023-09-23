@@ -26,9 +26,6 @@ mod app {
 
     #[init]
     fn init(cx: init::Context) -> (Shared, Local, init::Monotonics) {
-        // Initialize monotonic timer.
-        let mono = Systick::new(cx.core.SYST, 480_000_000);
-
         // Get device peripherals and the board abstraction.
         let dp = cx.device;
         let board = daisy::Board::take().unwrap();
@@ -37,6 +34,9 @@ mod app {
         let ccdr = daisy::board_freeze_clocks!(board, dp);
         let pins = daisy::board_split_gpios!(board, ccdr, dp);
         let led = daisy::board_split_leds!(pins).USER;
+
+        // Initialize monotonic timer.
+        let mono = Systick::new(cx.core.SYST, ccdr.clocks.sys_ck().to_Hz());
 
         // Spawn blinking task.
         set_led::spawn(true).unwrap();
