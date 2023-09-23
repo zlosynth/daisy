@@ -8,6 +8,7 @@ backwards compatibility.
 
 * **Breaking** Remove logging abstractions from the crate.
 * **Breaking** The crate no longer re-exports `embedded_hal`.
+* **Breaking** Remove `Led` trait.
 * Bump STM32H7 HAL to version 0.14.
 * Improve style and documentation of examples.
 * Introduce RTIC example of audio processing.

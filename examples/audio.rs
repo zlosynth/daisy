@@ -15,7 +15,6 @@ use hal::pac::{self, interrupt};
 use stm32h7xx_hal as hal;
 
 use daisy::audio;
-use daisy::led::Led;
 
 // Keep audio interface in a global, so it can be shared between functions.
 static AUDIO_INTERFACE: Mutex<RefCell<Option<audio::Interface>>> = Mutex::new(RefCell::new(None));
@@ -50,9 +49,9 @@ fn main() -> ! {
     // Keep blinking to block main and shows signs of life.
     let one_second = ccdr.clocks.sys_ck().to_Hz();
     loop {
-        led_user.on();
+        led_user.toggle();
         asm::delay(one_second);
-        led_user.off();
+        led_user.toggle();
         asm::delay(one_second);
     }
 }

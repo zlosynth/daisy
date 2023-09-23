@@ -6,8 +6,6 @@
 use cortex_m_rt::entry;
 use panic_semihosting as _;
 
-use daisy::led::Led;
-
 #[entry]
 fn main() -> ! {
     // Get device peripherals and the board abstraction.
@@ -39,9 +37,9 @@ fn main() -> ! {
 
     // Compare the read values with those written and lit the LED if they match.
     if data == buffer {
-        led_user.on();
+        led_user.set_high();
     } else {
-        led_user.off();
+        led_user.set_low();
     }
 
     // Sleep forever.

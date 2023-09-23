@@ -11,7 +11,7 @@ use panic_semihosting as _;
 mod app {
     use systick_monotonic::*;
 
-    use daisy::led::{Led, LedUser};
+    use daisy::led::LedUser;
 
     #[monotonic(binds = SysTick, default = true)]
     type Mono = Systick<1000>; // 1 kHz / 1 ms granularity
@@ -39,20 +39,15 @@ mod app {
         let mono = Systick::new(cx.core.SYST, ccdr.clocks.sys_ck().to_Hz());
 
         // Spawn blinking task.
-        set_led::spawn(true).unwrap();
+        toggle_led::spawn().unwrap();
 
         (Shared {}, Local { led }, init::Monotonics(mono))
     }
 
     // Blink every second.
     #[task(local = [led])]
-    fn set_led(cx: set_led::Context, on: bool) {
-        if on {
-            cx.local.led.on();
-            set_led::spawn_after(1.secs(), false).unwrap();
-        } else {
-            cx.local.led.off();
-            set_led::spawn_after(1.secs(), true).unwrap();
-        }
+    fn toggle_led(cx: toggle_led::Context) {
+        cx.local.led.toggle();
+        toggle_led::spawn_after(1.secs()).unwrap();
     }
 }

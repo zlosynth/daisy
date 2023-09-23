@@ -10,8 +10,6 @@ use panic_semihosting as _;
 use hal::pac;
 use stm32h7xx_hal as hal;
 
-use daisy::led::Led;
-
 #[entry]
 fn main() -> ! {
     // Get core and device peripherals, and the board abstraction.
@@ -45,9 +43,7 @@ fn main() -> ! {
     // the test above passed.
     let one_second = ccdr.clocks.sys_ck().to_Hz();
     loop {
-        led_user.on();
-        asm::delay(one_second);
-        led_user.off();
+        led_user.toggle();
         asm::delay(one_second);
     }
 }

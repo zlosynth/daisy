@@ -6,8 +6,6 @@
 use cortex_m_rt::entry;
 use panic_semihosting as _;
 
-use daisy::led::Led;
-
 #[entry]
 fn main() -> ! {
     // Get device peripherals and the board abstraction.
@@ -22,9 +20,7 @@ fn main() -> ! {
     // Blink every second.
     let one_second = ccdr.clocks.sys_ck().to_Hz();
     loop {
-        led_user.on();
-        cortex_m::asm::delay(one_second);
-        led_user.off();
+        led_user.toggle();
         cortex_m::asm::delay(one_second);
     }
 }

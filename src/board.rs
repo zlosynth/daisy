@@ -2,7 +2,6 @@
 
 use crate::clocks;
 use crate::hal;
-use crate::led;
 use crate::pins::*;
 
 // `no_mangle` is used here to prevent linking different minor
@@ -222,10 +221,6 @@ impl Board {
             },
         }
     }
-
-    pub fn split_led_user(&self, pin: LedUserPin) -> led::LedUser {
-        led::LedUser::new(pin)
-    }
 }
 
 /// Configure clocks and retrieve a CCDR handle.
@@ -328,9 +323,7 @@ macro_rules! board_split_audio {
 #[macro_export]
 macro_rules! board_split_leds {
     ($pins:expr) => {{
-        daisy::led::Leds {
-            USER: daisy::led::LedUser::new($pins.LED_USER),
-        }
+        daisy::led::Leds::new($pins.LED_USER)
     }};
 }
 
