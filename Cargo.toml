@@ -31,7 +31,6 @@ stm32-fmc = "0.3"
 num_enum = { version = "0.5.6", optional = true, default-features = false }
 
 [dev-dependencies]
-panic-halt = "0.2.0"
 panic-semihosting = { version = "0.5.6" }
 systick-monotonic = "1"
 cortex-m-rtic = "1"
