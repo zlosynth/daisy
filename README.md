@@ -35,6 +35,17 @@ make flash WHAT=blinky BOARD=seed_1_1
 * This library will **not** abstract anything that is not on Daisy, e.g. pots,
   SD cards, MIDI, ...
 
+# HAL compatibility
+
+This library is closely tied to [stm32h7xx-hal](https://github.com/stm32-rs/stm32h7xx-hal/).
+Make sure to use compatible versions in your `Cargo.toml`.
+
+| **Daisy**   | **HAL** |
+|-------------|---------|
+| `0.8`       | `0.14`  |
+| `0.2`-`0.7` | `0.12`  |
+| `0.1`       | `0.11`  |
+
 # License
 
 This library is distributed under the terms of the MIT license. See
