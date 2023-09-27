@@ -23,7 +23,7 @@ I am still trying to figure out a good API for the project. Expect it to change.
 To mitigate breakage of your code on library update, use macros defined under
 `board.rs` to initialize resources whenever possible.
 
-# Flash an example
+# Flashing an example
 
 ``` sh
 make flash WHAT=blinky BOARD=seed_1_1
