@@ -17,6 +17,12 @@ Currently this library supports following boards:
 
 Select the board by using its respective feature.
 
+# Flashing an example
+
+``` sh
+make flash WHAT=blinky BOARD=seed_1_1
+```
+
 # API stability
 
 I am still trying to figure out a good API for the project. Expect it to change.
@@ -33,12 +39,6 @@ Make sure to use compatible versions in your `Cargo.toml`.
 | `0.8`       | `0.14`  |
 | `0.2`-`0.7` | `0.12`  |
 | `0.1`       | `0.11`  |
-
-# Flashing an example
-
-``` sh
-make flash WHAT=blinky BOARD=seed_1_1
-```
 
 # Razor
 
