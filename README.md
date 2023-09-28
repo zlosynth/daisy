@@ -23,6 +23,17 @@ I am still trying to figure out a good API for the project. Expect it to change.
 To mitigate breakage of your code on library update, use macros defined under
 `board.rs` to initialize resources whenever possible.
 
+# HAL compatibility
+
+This library is closely tied to [stm32h7xx-hal](https://github.com/stm32-rs/stm32h7xx-hal/).
+Make sure to use compatible versions in your `Cargo.toml`.
+
+| **Daisy**   | **HAL** |
+|-------------|---------|
+| `0.8`       | `0.14`  |
+| `0.2`-`0.7` | `0.12`  |
+| `0.1`       | `0.11`  |
+
 # Flashing an example
 
 ``` sh
@@ -34,17 +45,6 @@ make flash WHAT=blinky BOARD=seed_1_1
 * This library aims to abstract all peripherals that are available on Daisy.
 * This library will **not** abstract anything that is not on Daisy, e.g. pots,
   SD cards, MIDI, ...
-
-# HAL compatibility
-
-This library is closely tied to [stm32h7xx-hal](https://github.com/stm32-rs/stm32h7xx-hal/).
-Make sure to use compatible versions in your `Cargo.toml`.
-
-| **Daisy**   | **HAL** |
-|-------------|---------|
-| `0.8`       | `0.14`  |
-| `0.2`-`0.7` | `0.12`  |
-| `0.1`       | `0.11`  |
 
 # License
 
