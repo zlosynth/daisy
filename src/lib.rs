@@ -16,6 +16,12 @@
 //!
 //! Select the board by using its respective feature.
 //!
+//! # Sampling rate
+//!
+//! By default, the audio sampling rate is set to 48 kHz. This can be increased to
+//! 96 kHz by enabling the `sampling_rate_96khz` feature.
+//!
+//!
 //! # API stability
 //!
 //! I am still trying to figure out a good API for the project. Expect it to change.

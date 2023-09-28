@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+* Allow audio sampling rate of 96 kHz.
+
 ## 0.8.0
 
 * **Breaking** Remove logging abstractions from the crate.

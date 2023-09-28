@@ -74,6 +74,11 @@ enum Register {
     RESET = 0x0F,
 }
 
+#[cfg(not(feature = "sampling_rate_96khz"))]
+const SAMPLING_RATE: u8 = 0x00; // 48 kHz
+#[cfg(feature = "sampling_rate_96khz")]
+const SAMPLING_RATE: u8 = 0x07; // 96 kHz
+
 const REGISTER_CONFIG: &[(Register, u8)] = &[
     // Reset Codec.
     (Register::RESET, 0x00),
@@ -91,7 +96,7 @@ const REGISTER_CONFIG: &[(Register, u8)] = &[
     // Configure digital format.
     (Register::IFACE, 0x09),
     // Set samplerate.
-    (Register::SRATE, 0x00),
+    (Register::SRATE, SAMPLING_RATE),
     (Register::ACTIVE, 0x00),
     (Register::ACTIVE, 0x01),
 ];
