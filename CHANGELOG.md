@@ -9,6 +9,7 @@ backwards compatibility.
 * Bump STM32H7 HAL to version 0.16.
 * Introduce `probe-rs` to the project.
 * Illustrate use of `defmt` in examples.
+* Introduce support for Daisy Seed 1.2.
 
 ## 0.9.0
 

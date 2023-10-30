@@ -40,7 +40,7 @@ fn main() -> ! {
     adc1.set_resolution(adc::Resolution::SixteenBit);
 
     // Select a pin that will be used for ADC, depending on the board.
-    #[cfg(any(feature = "seed", feature = "seed_1_1"))]
+    #[cfg(any(feature = "seed", feature = "seed_1_1", feature = "seed_1_2"))]
     let mut adc1_channel = pins.GPIO.PIN_21.into_analog();
     #[cfg(feature = "patch_sm")]
     let mut adc1_channel = pins.GPIO.PIN_C2.into_analog(); // CV_4

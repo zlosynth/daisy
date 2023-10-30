@@ -6,7 +6,7 @@ use hal::gpio;
 // - types --------------------------------------------------------------------
 
 // https://github.com/electro-smith/DaisyWiki/wiki/2.-Daisy-Seed-Pinout
-#[cfg(any(feature = "seed", feature = "seed_1_1"))]
+#[cfg(any(feature = "seed", feature = "seed_1_1", feature = "seed_1_2"))]
 #[allow(non_snake_case)]
 pub struct Gpio {
     pub PIN_0: gpio::gpiob::PB12<gpio::Analog>, // STM PIN 01, USB OTG ID, I2C3 SCL
@@ -93,6 +93,12 @@ pub struct CodecPins {
 pub struct CodecPins {
     pub SCL: gpio::gpioh::PH4<gpio::Analog>,  // I2C2 SCL (WM8731)
     pub SDA: gpio::gpiob::PB11<gpio::Analog>, // I2C2 SDA (WM8731)
+}
+
+#[cfg(feature = "seed_1_2")]
+#[allow(non_snake_case)]
+pub struct CodecPins {
+    pub DEMP: gpio::gpiob::PB11<gpio::Analog>, // DEMP (PCM3060)
 }
 
 #[cfg(feature = "patch_sm")]

@@ -46,7 +46,7 @@ fn main() -> ! {
     // | DC             | D/C           | 10       | D8           |
     let mut display = {
         // Select the pins depending on the used board.
-        #[cfg(any(feature = "seed", feature = "seed_1_1"))]
+        #[cfg(any(feature = "seed", feature = "seed_1_1", feature = "seed_1_2"))]
         let pins = (
             pins.GPIO.PIN_8.into_alternate(),
             pins.GPIO.PIN_7.into_push_pull_output(),
@@ -66,7 +66,7 @@ fn main() -> ! {
 
         // Initialize SPI, selecting the right peripheral depending on the used
         // board.
-        #[cfg(any(feature = "seed", feature = "seed_1_1"))]
+        #[cfg(any(feature = "seed", feature = "seed_1_1", feature = "seed_1_2"))]
         let spi = dp.SPI1.spi(
             (sck, spi::NoMiso, mosi),
             spi::MODE_0,

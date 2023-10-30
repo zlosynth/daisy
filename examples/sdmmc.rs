@@ -36,7 +36,7 @@ fn main() -> ! {
     let one_second = ccdr.clocks.sys_ck().to_Hz();
 
     // Select pins connected to the SD card depending on the used board.
-    #[cfg(any(feature = "seed", feature = "seed_1_1"))]
+    #[cfg(any(feature = "seed", feature = "seed_1_1", feature = "seed_1_2"))]
     let (clk, cmd, d0, d1, d2, d3) = (
         pins.GPIO.PIN_6,
         pins.GPIO.PIN_5,

@@ -59,7 +59,7 @@ impl Board {
         gpioi: hal::gpio::gpioi::Parts,
     ) -> Pins {
         Pins {
-            #[cfg(any(feature = "seed", feature = "seed_1_1"))]
+            #[cfg(any(feature = "seed", feature = "seed_1_1", feature = "seed_1_2"))]
             GPIO: Gpio {
                 PIN_0: gpiob.pb12,
                 PIN_1: gpioc.pc11,
@@ -135,6 +135,10 @@ impl Board {
             CODEC: CodecPins {
                 SCL: gpioh.ph4,  // I2C2 SCL (WM8731)
                 SDA: gpiob.pb11, // I2C2 SDA (WM8731)
+            },
+            #[cfg(feature = "seed_1_2")]
+            CODEC: CodecPins {
+                DEMP: gpiob.pb11, // DEMP (PCM3060)
             },
             #[cfg(feature = "patch_sm")]
             CODEC: CodecPins {
@@ -258,6 +262,38 @@ macro_rules! board_split_gpios {
 macro_rules! board_split_audio {
     ($ccdr:expr, $pins:expr) => {{
         let codec_pins = ($pins.CODEC.PDN.into_push_pull_output(),);
+
+        let sai1_pins = (
+            $pins.SAI.MCLK_A.into_alternate::<6>(),
+            $pins.SAI.SCK_A.into_alternate::<6>(),
+            $pins.SAI.FS_A.into_alternate::<6>(),
+            $pins.SAI.SD_A.into_alternate::<6>(),
+            Some($pins.SAI.SD_B.into_alternate::<6>()),
+        );
+
+        let sai1_prec = $ccdr
+            .peripheral
+            .SAI1
+            .kernel_clk_mux(daisy::hal::rcc::rec::Sai1ClkSel::Pll3P);
+
+        daisy::audio::Interface::init(
+            &$ccdr.clocks,
+            sai1_prec,
+            sai1_pins,
+            codec_pins,
+            $ccdr.peripheral.I2C2,
+            $ccdr.peripheral.DMA1,
+        )
+        .unwrap()
+    }};
+}
+
+/// Configure audio codec and return its handle.
+#[cfg(feature = "seed_1_2")]
+#[macro_export]
+macro_rules! board_split_audio {
+    ($ccdr:expr, $pins:expr) => {{
+        let codec_pins = ($pins.CODEC.DEMP.into_push_pull_output(),);
 
         let sai1_pins = (
             $pins.SAI.MCLK_A.into_alternate::<6>(),

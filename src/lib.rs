@@ -12,6 +12,7 @@
 //!
 //! * [Daisy Seed](https://www.electro-smith.com/daisy/daisy) (codec AK4556), `seed`
 //! * [Daisy Seed 1.1](https://www.electro-smith.com/daisy/daisy) (codec WM8731), `seed_1_1`
+//! * [Daisy Seed 1.2](https://www.electro-smith.com/daisy/daisy) (codec PCM3060), `seed_1_2`
 //! * [Daisy Patch SM](https://www.electro-smith.com/daisy/patch-sm) (codec PCM3060), `patch_sm`
 //!
 //! Select the board by using its respective feature.
@@ -59,18 +60,38 @@
 //! make flash WHAT=blinky BOARD=seed_1_1
 //! ```
 
-#[cfg(all(feature = "seed_1_1", any(feature = "seed", feature = "patch_sm")))]
+#[cfg(all(
+    feature = "seed_1_2",
+    any(feature = "seed_1_1", feature = "seed", feature = "patch_sm")
+))]
 compile_error!("only a single target board must be selected");
 
-#[cfg(all(feature = "seed", any(feature = "seed_1_1", feature = "patch_sm")))]
+#[cfg(all(
+    feature = "seed_1_1",
+    any(feature = "seed_1_2", feature = "seed", feature = "patch_sm")
+))]
 compile_error!("only a single target board must be selected");
 
-#[cfg(all(feature = "patch_sm", any(feature = "seed_1_1", feature = "seed")))]
+#[cfg(all(
+    feature = "seed",
+    any(feature = "seed_1_2", feature = "seed_1_1", feature = "patch_sm")
+))]
 compile_error!("only a single target board must be selected");
 
-#[cfg(not(any(feature = "seed_1_1", feature = "seed", feature = "patch_sm")))]
+#[cfg(all(
+    feature = "patch_sm",
+    any(feature = "seed_1_2", feature = "seed_1_1", feature = "seed")
+))]
+compile_error!("only a single target board must be selected");
+
+#[cfg(not(any(
+    feature = "seed_1_2",
+    feature = "seed_1_1",
+    feature = "seed",
+    feature = "patch_sm"
+)))]
 compile_error!(
-    "target board must be selected using a feature: \"seed_1_1\" | \"seed\" | \"patch_sm\""
+    "target board must be selected using a feature: \"seed_1_2\" | \"seed_1_1\" | \"seed\" | \"patch_sm\""
 );
 
 pub mod audio;
