@@ -45,6 +45,7 @@ cat << EOF > ${DESTINATION}/index.html
     board:
     <a href="seed/daisy">Seed</a>,
     <a href="seed_1_1/daisy">Seed 1.1</a>,
+    <a href="seed_1_2/daisy">Seed 1.2</a>,
     <a href="patch_sm/daisy">Patch SM</a>
   </h1></center>
 </body>
@@ -55,5 +56,7 @@ cargo doc --no-deps --features seed
 cp -r target/thumbv7em-none-eabihf/doc ${DESTINATION}/seed
 cargo doc --no-deps --features seed_1_1
 cp -r target/thumbv7em-none-eabihf/doc ${DESTINATION}/seed_1_1
+cargo doc --no-deps --features seed_1_2
+cp -r target/thumbv7em-none-eabihf/doc ${DESTINATION}/seed_1_2
 cargo doc --no-deps --features patch_sm
 cp -r target/thumbv7em-none-eabihf/doc ${DESTINATION}/patch_sm
