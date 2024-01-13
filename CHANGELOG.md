@@ -7,6 +7,7 @@ backwards compatibility.
 ## Unreleased
 
 * Allow audio sampling rate of 96 kHz.
+* **Breaking** Fix issue where left/right audio channels were swapped
 
 ## 0.8.0
 
