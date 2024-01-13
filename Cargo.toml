@@ -26,7 +26,7 @@ targets = ["thumbv7em-none-eabihf"]
 [dependencies]
 cortex-m = "0.7"
 cortex-m-rt = { version = "0.7", features = [ "device" ] }
-stm32h7xx-hal = { version = "0.14", features = [ "stm32h750v", "rt", "revision_v", "usb_hs", "xspi", "fmc" ] }
+stm32h7xx-hal = { version = "0.15", features = [ "stm32h750v", "rt", "revision_v", "usb_hs", "xspi", "fmc" ] }
 stm32-fmc = "0.3"
 num_enum = { version = "0.5.6", optional = true, default-features = false }
 
@@ -39,7 +39,7 @@ display-interface-spi = "0.4"
 ssd1306 = "0.8.0"
 fugit = "0.3"
 # HAL in examples requires an additional SDMMC feature.
-stm32h7xx-hal = { version = "0.14", features = [ "stm32h750v", "rt", "revision_v", "usb_hs", "xspi", "fmc", "sdmmc" ] }
+stm32h7xx-hal = { version = "0.15", features = [ "stm32h750v", "rt", "revision_v", "usb_hs", "xspi", "fmc", "sdmmc" ] }
 
 [features]
 seed = []
