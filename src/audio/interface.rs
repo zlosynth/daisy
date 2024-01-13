@@ -120,7 +120,7 @@ impl Interface {
 
             let y0 = u24_to_f32(rx_y0);
             let y1 = u24_to_f32(rx_y1);
-            block[block_index] = (y1, y0);
+            block[block_index] = (y0, y1);
 
             dma_index += 2;
             block_index += 1;
@@ -136,7 +136,7 @@ impl Interface {
             let tx0: usize = dma_index + skip.0;
             let tx1: usize = tx0 + 1;
 
-            let (y0, y1) = block[block_index];
+            let (y1, y0) = block[block_index];
             unsafe { TX_BUFFER[tx0] = f32_to_u24(y0) };
             unsafe { TX_BUFFER[tx1] = f32_to_u24(y1) };
 
