@@ -6,8 +6,10 @@ backwards compatibility.
 
 ## Unreleased
 
+## 0.9.0
+
+* **Breaking** Fix issue where left/right audio channels were swapped.
 * Allow audio sampling rate of 96 kHz.
-* **Breaking** Fix issue where left/right audio channels were swapped
 * Bump STM32H7 HAL to version 0.15.
 
 ## 0.8.0
