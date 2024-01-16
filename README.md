@@ -41,6 +41,7 @@ Make sure to use compatible versions in your `Cargo.toml`.
 
 | **Daisy**   | **HAL** |
 |-------------|---------|
+| `0.9`       | `0.15`  |
 | `0.8`       | `0.14`  |
 | `0.2`-`0.7` | `0.12`  |
 | `0.1`       | `0.11`  |
