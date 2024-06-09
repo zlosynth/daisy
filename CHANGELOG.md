@@ -6,6 +6,10 @@ backwards compatibility.
 
 ## Unreleased
 
+* Bump STM32H7 HAL to version 0.16.
+* Introduce `probe-rs` to the project.
+* Illustrate use of `defmt` in examples.
+
 ## 0.9.0
 
 * **Breaking** Fix issue where left/right audio channels were swapped.
