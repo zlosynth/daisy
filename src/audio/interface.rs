@@ -1,4 +1,5 @@
 use core::num::Wrapping;
+use core::ptr;
 
 use super::codec::{Codec, Pins as CodecPins};
 use super::transfer::{Channel, Config as TransferConfig, Sai1Pins, State, Sync, Transfer};
@@ -62,15 +63,15 @@ impl Interface {
             sai1_rec,
             sai1_pins,
             dma1_rec,
-            unsafe { &mut TX_BUFFER },
-            unsafe { &mut RX_BUFFER },
+            unsafe { &mut *ptr::addr_of_mut!(TX_BUFFER) },
+            unsafe { &mut *ptr::addr_of_mut!(RX_BUFFER) },
             transfer_config,
         );
 
         // Verifying safety requirements and recommendations of
         // invalidate_dcache_by_slice and clean_dcache_by_slice.
-        validate_slice_against_cache_line(unsafe { &TX_BUFFER });
-        validate_slice_against_cache_line(unsafe { &RX_BUFFER });
+        validate_slice_against_cache_line(unsafe { &*ptr::addr_of!(TX_BUFFER) });
+        validate_slice_against_cache_line(unsafe { &*ptr::addr_of!(RX_BUFFER) });
 
         Ok(Self {
             fs: FS,
@@ -105,7 +106,7 @@ impl Interface {
         unsafe {
             CorePeripherals::steal()
                 .SCB
-                .invalidate_dcache_by_slice(&mut RX_BUFFER);
+                .invalidate_dcache_by_slice(&mut *ptr::addr_of_mut!(RX_BUFFER));
         }
 
         // Convert and copy received audio to callback buffer.
@@ -151,7 +152,7 @@ impl Interface {
         unsafe {
             CorePeripherals::steal()
                 .SCB
-                .clean_dcache_by_slice(&TX_BUFFER);
+                .clean_dcache_by_slice(&*ptr::addr_of!(TX_BUFFER));
         }
 
         Ok(())
