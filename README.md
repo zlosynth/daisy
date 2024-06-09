@@ -19,7 +19,16 @@ Select the board by using its respective feature.
 
 # Flashing an example
 
-``` sh
+Using DFU. Connect using a sigle USB cable, click BOOT+RESET before flashing:
+
+```sh
+make flash-dfu WHAT=blinky BOARD=seed_1_1
+```
+
+Using [`probe-rs`](https://probe.rs/). This requires ST-Link probe, but provides
+additional logs:
+
+```sh
 make flash WHAT=blinky BOARD=seed_1_1
 ```
 
@@ -36,6 +45,7 @@ Make sure to use compatible versions in your `Cargo.toml`.
 
 | **Daisy**   | **HAL** |
 |-------------|---------|
+| `0.10`      | `0.16`  |
 | `0.9`       | `0.15`  |
 | `0.8`       | `0.14`  |
 | `0.2`-`0.7` | `0.12`  |
