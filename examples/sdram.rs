@@ -5,10 +5,21 @@
 
 use cortex_m::asm;
 use cortex_m_rt::entry;
-use panic_semihosting as _;
+
+#[cfg(not(feature = "defmt"))]
+use panic_halt as _;
+#[cfg(feature = "defmt")]
+use {defmt_rtt as _, panic_probe as _};
 
 use hal::pac;
 use stm32h7xx_hal as hal;
+
+macro_rules! log {
+    ($message:expr) => {
+        #[cfg(feature = "defmt")]
+        defmt::info!($message);
+    };
+}
 
 #[entry]
 fn main() -> ! {
@@ -32,12 +43,14 @@ fn main() -> ! {
     };
 
     // Test the SDRAM memory by writing to it and reading back.
+    log!("Writting into RAM");
     ram_slice[0] = 1u16;
     ram_slice[3] = 2;
     ram_slice[ram_slice.len() - 1] = 3;
     assert_eq!(ram_slice[0], 1);
     assert_eq!(ram_slice[3], 2);
     assert_eq!(ram_slice[ram_slice.len() - 1], 3);
+    log!("All went as expected");
 
     // Keep blinking to block main and shows signs of life and to show that
     // the test above passed.

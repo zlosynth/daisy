@@ -5,12 +5,23 @@
 
 use cortex_m::asm;
 use cortex_m_rt::entry;
-use panic_semihosting as _;
+
+#[cfg(not(feature = "defmt"))]
+use panic_halt as _;
+#[cfg(feature = "defmt")]
+use {defmt_rtt as _, panic_probe as _};
 
 use hal::gpio::Speed;
 use hal::sdmmc::{SdCard, Sdmmc};
 use hal::{pac, prelude::*};
 use stm32h7xx_hal as hal;
+
+macro_rules! log {
+    ($message:expr) => {
+        #[cfg(feature = "defmt")]
+        defmt::info!($message);
+    };
+}
 
 #[entry]
 fn main() -> ! {
@@ -93,11 +104,14 @@ fn main() -> ! {
 
     // Write to the card, read back, test that the values match.
     let mut buffer = [0x34; 512];
+    log!("Writting to the card");
     sdmmc.write_block(0, &buffer).unwrap();
+    log!("Reading from the card");
     sdmmc.read_block(0, &mut buffer).unwrap();
     for byte in buffer.iter() {
         assert_eq!(*byte, 0x34);
     }
+    log!("All went as expected");
 
     // Keep blinking to block main and shows signs of life and to show that
     // the test above passed.

@@ -6,7 +6,10 @@
 #![no_main]
 #![no_std]
 
-use panic_semihosting as _;
+#[cfg(not(feature = "defmt"))]
+use panic_halt as _;
+#[cfg(feature = "defmt")]
+use {defmt_rtt as _, panic_probe as _};
 
 #[rtic::app(device = stm32h7xx_hal::pac, peripherals = true)]
 mod app {

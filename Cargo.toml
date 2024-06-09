@@ -31,7 +31,6 @@ stm32-fmc = "0.3"
 num_enum = { version = "0.5.6", optional = true, default-features = false }
 
 [dev-dependencies]
-panic-semihosting = { version = "0.6" }
 systick-monotonic = "1"
 cortex-m-rtic = "1"
 embedded-graphics = "0.8"
@@ -40,12 +39,17 @@ ssd1306 = "0.8.0"
 fugit = "0.3"
 # HAL in examples requires an additional SDMMC feature.
 stm32h7xx-hal = { version = "0.16", features = [ "stm32h750v", "rt", "revision_v", "usb_hs", "xspi", "fmc", "sdmmc" ] }
+defmt = { version = "0.3.8" }
+defmt-rtt = { version = "0.4.1" }
+panic-halt = "0.2.0"
+panic-probe = { version = "0.3.2", features = ["print-defmt"] }
 
 [features]
 seed = []
 seed_1_1 = [ "num_enum" ]
 patch_sm = [ "num_enum" ]
 sampling_rate_96khz = []
+defmt = []
 
 [[example]]
 name = "blinky"

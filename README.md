@@ -26,7 +26,7 @@ make flash-dfu WHAT=blinky BOARD=seed_1_1
 ```
 
 Using [`probe-rs`](https://probe.rs/). This requires ST-Link probe, but provides
-additional logs:
+additional logs and panic messages:
 
 ```sh
 make flash WHAT=blinky BOARD=seed_1_1

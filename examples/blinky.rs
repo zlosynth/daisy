@@ -4,7 +4,11 @@
 #![no_std]
 
 use cortex_m_rt::entry;
-use panic_semihosting as _;
+
+#[cfg(not(feature = "defmt"))]
+use panic_halt as _;
+#[cfg(feature = "defmt")]
+use {defmt_rtt as _, panic_probe as _};
 
 #[entry]
 fn main() -> ! {

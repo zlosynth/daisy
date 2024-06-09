@@ -26,7 +26,7 @@ update:
 
 .PHONY: flash
 flash:
-	DEFMT_LOG=$(DEFMT_LOG) $(CARGO) run --release --example $(WHAT) --features $(BOARD)
+	DEFMT_LOG=$(DEFMT_LOG) $(CARGO) run --release --example $(WHAT) --features $(BOARD),defmt
 
 .PHONY: flash-dfu
 flash-dfu:
