@@ -13,6 +13,7 @@
 //! * [Daisy Seed](https://www.electro-smith.com/daisy/daisy) (codec AK4556), `seed`
 //! * [Daisy Seed 1.1](https://www.electro-smith.com/daisy/daisy) (codec WM8731), `seed_1_1`
 //! * [Daisy Seed 1.2](https://www.electro-smith.com/daisy/daisy) (codec PCM3060), `seed_1_2`
+//! * [Daisy Seed 1.2](https://www.electro-smith.com/daisy/daisy) (codec PCM3060), `seed_1_2`
 //! * [Daisy Patch SM](https://www.electro-smith.com/daisy/patch-sm) (codec PCM3060), `patch_sm`
 //!
 //! Select the board by using its respective feature.
@@ -36,6 +37,7 @@
 //!
 //! | **Daisy**   | **HAL** |
 //! |-------------|---------|
+//! | `0.10`      | `0.16`  |
 //! | `0.9`       | `0.15`  |
 //! | `0.8`       | `0.14`  |
 //! | `0.2`-`0.7` | `0.12`  |
@@ -57,7 +59,7 @@
 //! * [SD card](https://github.com/zlosynth/daisy/blob/main/examples/sdmmc.rs)
 //!
 //! ``` sh
-//! make flash WHAT=blinky BOARD=seed_1_1
+//! make flash-dfu WHAT=blinky BOARD=seed_1_1
 //! ```
 
 #[cfg(all(
