@@ -6,6 +6,8 @@ backwards compatibility.
 
 ## Unreleased
 
+## 0.10.0
+
 * Bump STM32H7 HAL to version 0.16.
 * Introduce `probe-rs` to the project.
 * Illustrate use of `defmt` in examples.
