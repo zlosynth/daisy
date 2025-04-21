@@ -2,7 +2,7 @@
 name = "daisy"
 version = "0.10.0" # hack/release.sh
 authors = [ "Petr Horáček <hrck@protonmail.com>" ]
-edition = "2018"
+edition = "2024"
 license = "MIT"
 description = "A board support package for the Electro-Smith Daisy Seed and Patch SM"
 repository = "https://github.com/zlosynth/daisy"

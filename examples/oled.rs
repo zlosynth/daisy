@@ -20,7 +20,7 @@ use embedded_graphics::{
     primitives::{Circle, PrimitiveStyle, Rectangle},
 };
 use fugit::RateExtU32;
-use ssd1306::{prelude::*, Ssd1306};
+use ssd1306::{Ssd1306, prelude::*};
 
 #[entry]
 fn main() -> ! {

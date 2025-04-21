@@ -7,7 +7,7 @@ use crate::pins::*;
 // `no_mangle` is used here to prevent linking different minor
 // versions of this crate as that would let you `take` the core
 // peripherals more than once (one per minor version)
-#[no_mangle]
+#[unsafe(no_mangle)]
 static DAISY_BOARD: () = ();
 
 /// Set to `true` when `take` was called to make `Board` a singleton.
@@ -358,9 +358,7 @@ macro_rules! board_split_audio {
 /// Allow access to the on-board LED.
 #[macro_export]
 macro_rules! board_split_leds {
-    ($pins:expr) => {{
-        daisy::led::Leds::new($pins.LED_USER)
-    }};
+    ($pins:expr) => {{ daisy::led::Leds::new($pins.LED_USER) }};
 }
 
 /// Configure flash storage and retrieve a handle to it.
