@@ -15,5 +15,4 @@ openocd.gdb
 RELEASE.md
 tmp/
 stm32h7x-orig.cfg
-rust-toolchain
 _docs/
