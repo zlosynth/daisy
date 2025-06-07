@@ -50,6 +50,7 @@ seed_1_1 = [ "num_enum" ]
 seed_1_2 = []
 patch_sm = [ "num_enum" ]
 sampling_rate_96khz = []
+block_length_64 = []
 defmt = []
 
 [[example]]

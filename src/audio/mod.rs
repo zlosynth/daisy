@@ -9,7 +9,11 @@ mod transfer;
 
 pub use interface::{Block, Interface};
 
+#[cfg(not(feature = "block_length_64"))]
 pub const BLOCK_LENGTH: usize = 32; // 32 samples
+#[cfg(feature = "block_length_64")]
+pub const BLOCK_LENGTH: usize = 64; // 64 samples
+
 pub const HALF_DMA_BUFFER_LENGTH: usize = BLOCK_LENGTH * 2; // 2 channels
 pub const DMA_BUFFER_LENGTH: usize = HALF_DMA_BUFFER_LENGTH * 2; // 2 half-blocks
 
