@@ -33,6 +33,12 @@ additional logs and panic messages:
 make flash WHAT=blinky BOARD=seed_1_1
 ```
 
+# Using Daisy bootloader
+
+It is possible to use the [Daisy Bootloader](https://electro-smith.github.io/libDaisy/md_doc_2md_2__a7___getting-_started-_daisy-_bootloader.html)
+to extend the maximum firmware capacity. You can find a guide with an example under
+[examples/bootloader](examples/bootloader/).
+
 # API stability
 
 I am still trying to figure out a good API for the project. Expect it to change.
