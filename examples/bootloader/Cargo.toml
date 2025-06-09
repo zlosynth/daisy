@@ -1,0 +1,12 @@
+[package]
+name = "example_bootloader"
+version = "0.10.0" # hack/release.sh
+edition = "2024"
+
+[dependencies]
+cortex-m = "0.7"
+cortex-m-rt = { version = "0.7", features = [ "device", "set-vtor" ] }
+daisy = { path = "../../", features = ["patch_sm", "defmt"]}
+defmt = { version = "0.3.8" }
+defmt-rtt = { version = "0.4.1" }
+panic-probe = { version = "0.3.2", features = ["print-defmt"] }

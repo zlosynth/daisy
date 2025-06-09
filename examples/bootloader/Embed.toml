@@ -1,0 +1,8 @@
+[default.general]
+chip = "STM32H750VBTx"
+
+[default.rtt]
+enabled = true
+
+[default.flashing]
+enabled = false
