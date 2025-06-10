@@ -13,7 +13,6 @@
 //! * [Daisy Seed](https://www.electro-smith.com/daisy/daisy) (codec AK4556), `seed`
 //! * [Daisy Seed 1.1](https://www.electro-smith.com/daisy/daisy) (codec WM8731), `seed_1_1`
 //! * [Daisy Seed 1.2](https://www.electro-smith.com/daisy/daisy) (codec PCM3060), `seed_1_2`
-//! * [Daisy Seed 1.2](https://www.electro-smith.com/daisy/daisy) (codec PCM3060), `seed_1_2`
 //! * [Daisy Patch SM](https://www.electro-smith.com/daisy/patch-sm) (codec PCM3060), `patch_sm`
 //!
 //! Select the board by using its respective feature.
@@ -23,6 +22,10 @@
 //! By default, the audio sampling rate is set to 48 kHz. This can be increased to
 //! 96 kHz by enabling the `sampling_rate_96khz` feature.
 //!
+//! # Block length
+//!
+//! By default, the audio block length is 32 frames. This can be increased to 64
+//! by enabling the `block_length_64` feature.
 //!
 //! # API stability
 //!

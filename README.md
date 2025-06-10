@@ -37,6 +37,16 @@ Using [Daisy Bootloader](https://electro-smith.github.io/libDaisy/md_doc_2md_2__
 This extends the maximum firmware capacity. You can find a guide with an example under
 [examples/bootloader](examples/bootloader/).
 
+# Sampling rate
+
+By default, the audio sampling rate is set to 48 kHz. This can be increased to
+96 kHz by enabling the `sampling_rate_96khz` feature.
+
+# Block length
+
+By default, the audio block length is 32 frames. This can be increased to 64
+by enabling the `block_length_64` feature.
+
 # API stability
 
 I am still trying to figure out a good API for the project. Expect it to change.
