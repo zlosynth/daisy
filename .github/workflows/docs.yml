@@ -55,9 +55,9 @@ jobs:
       - name: Build documentation
         run: OUTPUT=_docs hack/build-docs.sh
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: _docs/
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v3
