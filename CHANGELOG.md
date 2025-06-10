@@ -6,6 +6,7 @@ backwards compatibility.
 
 ## Unreleased
 
+* Increase frequency accuracy of audio PLL clock.
 * Add a feature flag for longer audio block length.
 * Document how to use Daisy bootloader.
 
