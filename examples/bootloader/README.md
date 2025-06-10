@@ -16,10 +16,6 @@ accordingly.
 ## Flashing the example
 
 First, install the bootloader on the board. You can use <https://flash.daisy.audio/>,
-go to the "Bootloader" tab, select version "v6.2", and flash it.
-Alternatively, you can use the libDaisy project and its Makefile.
-
-First, install the bootloader on the board. You can use <https://flash.daisy.audio/>,
 go to the "Bootloader" tab, select version "v6.2", and flash it. Alternatively
 you can use the [libDaisy](https://github.com/electro-smith/libDaisy/tree/master)
 project and its `Makefile`.
@@ -37,10 +33,6 @@ cargo objcopy --release -- -O binary target/program.bin
 After building, use `dfu-util` to upload the program. Note the `-s` parameter,
 which now points to the beginning of the writable onboard flash, not the
 internal flash:
-
-After that, it is just a matter of using `dfu-util` to upload the program.
-Note the `-s` parameter which now points at the beginning of writeable
-on-board flash, instead of the internal flash:
 
 ```sh
 dfu-util -a 0 -s 0x90040000:leave -D target/program.bin -d ,0483:df11
