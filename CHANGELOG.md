@@ -6,7 +6,9 @@ backwards compatibility.
 
 ## Unreleased
 
-* Increase frequency accuracy of audio PLL clock.
+* **Breaking** Increase frequency accuracy of audio PLL clock. This may
+  put users of this crate out-of-tune in case they compensated for the
+  detune with an adjusted sample rate.
 * Add a feature flag for longer audio block length.
 * Document how to use Daisy bootloader.
 * Update to Rust 2024.
