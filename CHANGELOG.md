@@ -9,6 +9,7 @@ backwards compatibility.
 * Increase frequency accuracy of audio PLL clock.
 * Add a feature flag for longer audio block length.
 * Document how to use Daisy bootloader.
+* Update to Rust 2024.
 
 ## 0.10.0
 
