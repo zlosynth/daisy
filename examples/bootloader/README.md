@@ -87,7 +87,7 @@ they are either smaller or slower.
 ### Reserved flash
 
 Part of the onboard flash is used to store the firmware. It’s still possible
-for the firmware to use this flash, but care must be taken when writing to it.  
+for the firmware to use this flash, but care must be taken when writing to it.
 The first four 64 kB blocks are reserved, followed by the firmware itself.
 When using the bootloader in SRAM mode (as in this example), the firmware can
 take up to 480 kB, so the first 736 kB, or 184 sectors, are occupied and should
